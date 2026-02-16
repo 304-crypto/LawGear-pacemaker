@@ -41,9 +41,7 @@
       align-items:flex-end;
       justify-content:space-between;
     }
-    .title{
-      display:flex; gap:12px; align-items:center;
-    }
+    .title{display:flex; gap:12px; align-items:center;}
     .logo{
       width:44px;height:44px;border-radius:14px;
       background: linear-gradient(135deg, rgba(96,165,250,.95), rgba(34,197,94,.85));
@@ -86,9 +84,8 @@
       grid-template-columns: 380px 1fr;
       gap:14px;
     }
-    @media (max-width: 980px){
-      main{grid-template-columns: 1fr}
-    }
+    @media (max-width: 980px){ main{grid-template-columns: 1fr} }
+
     .panel{
       background: rgba(255,255,255,.04);
       border: 1px solid var(--line);
@@ -105,10 +102,9 @@
       gap:10px;
       flex-wrap:wrap;
     }
-    .panel .hd h2{
-      font-size:13px;margin:0;letter-spacing:.2px;
-    }
+    .panel .hd h2{font-size:13px;margin:0;letter-spacing:.2px;}
     .panel .bd{padding:14px}
+
     .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
     .grid3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
     .card{
@@ -117,9 +113,7 @@
       border-radius:16px;
       padding:12px;
     }
-    .metric{
-      display:flex; justify-content:space-between; align-items:flex-end; gap:10px;
-    }
+    .metric{display:flex; justify-content:space-between; align-items:flex-end; gap:10px;}
     .metric .k{font-size:12px;color:var(--muted);font-weight:700}
     .metric .v{font-size:18px;font-weight:900}
     .tiny{font-size:11px;color:var(--muted)}
@@ -142,8 +136,8 @@
     .dot.warn{background:var(--warn)}
     .dot.bad{background:var(--bad)}
     .dot.info{background:var(--info)}
-
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
     input[type="text"], input[type="number"], textarea, select{
       width:100%;
       background: rgba(255,255,255,.06);
@@ -168,16 +162,19 @@
       font-size:12px;
       font-weight:700;
     }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      font-size:12px;
+      font-weight:900;
+    }
 
-    /* Calendar 90 */
-    .calendar{
-      display:grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap:8px;
-    }
-    @media (max-width: 980px){
-      .calendar{grid-template-columns: repeat(6, 1fr)}
-    }
+    /* Calendar */
+    .calendar{display:grid;grid-template-columns: repeat(10, 1fr);gap:8px;}
+    @media (max-width: 980px){ .calendar{grid-template-columns: repeat(6, 1fr)} }
     .day{
       background: rgba(17,28,58,.72);
       border:1px solid rgba(255,255,255,.08);
@@ -208,24 +205,10 @@
     .badge.good{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12)}
     .badge.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.12)}
     .badge.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.12)}
-    .day .mini{
-      margin-top:8px;
-      font-size:10px;
-      color: rgba(170,182,211,.95);
-      display:flex; gap:6px; flex-wrap:wrap;
-    }
-    .mini span{
-      background: rgba(27,42,85,.75);
-      border:1px solid rgba(255,255,255,.08);
-      padding:4px 6px;
-      border-radius:999px;
-      font-weight:800;
-    }
+    .day .mini{margin-top:8px;font-size:10px;color: rgba(170,182,211,.95);display:flex; gap:6px; flex-wrap:wrap;}
+    .mini span{background: rgba(27,42,85,.75);border:1px solid rgba(255,255,255,.08);padding:4px 6px;border-radius:999px;font-weight:800;}
 
-    .checklist{
-      display:grid;
-      gap:8px;
-    }
+    .checklist{display:grid;gap:8px;}
     .check{
       display:flex; gap:10px; align-items:flex-start;
       padding:10px 10px;
@@ -236,14 +219,22 @@
     .check input{margin-top:2px}
     .check .t{font-weight:900;font-size:13px}
     .check .d{font-size:11px;color:var(--muted);margin-top:2px}
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border-radius:999px;
+
+    /* Prompt box */
+    .promptBox{
+      background: rgba(10,16,34,.65);
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
+      border-radius:16px;
+      padding:12px;
+    }
+    .promptActions{display:flex;gap:8px;flex-wrap:wrap}
+    .promptText{
+      width:100%;
+      min-height:220px;
+      margin-top:10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       font-size:12px;
-      font-weight:900;
+      line-height:1.55;
     }
 
     .footer-note{
@@ -253,8 +244,6 @@
       color: rgba(170,182,211,.95);
       font-size:12px;
     }
-    a{color: rgba(96,165,250,.95); text-decoration:none}
-    a:hover{text-decoration:underline}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
   </style>
 </head>
@@ -279,7 +268,7 @@
   </header>
 
   <main>
-    <!-- LEFT: Control / Details -->
+    <!-- LEFT -->
     <section class="panel">
       <div class="hd">
         <h2>오늘의 퀘스트 & 선택한 Day 편집</h2>
@@ -309,7 +298,7 @@
               <div class="v" id="leadCount">0</div>
             </div>
             <div class="sep"></div>
-            <div class="tiny">※ 여기 숫자는 “네가 기록한 값” 기준</div>
+            <div class="tiny">※ 수기 기록 기준</div>
           </div>
         </div>
 
@@ -319,7 +308,7 @@
           <div style="flex:1; min-width:220px">
             <label>90일 시작일</label>
             <input type="text" id="startDate" placeholder="예) 2026-02-16" />
-            <div class="tiny">비워두면 “오늘”을 Day 1로 자동 설정</div>
+            <div class="tiny">비워두면 “오늘”이 Day 1</div>
           </div>
           <div style="flex:1; min-width:220px">
             <label>현재 선택 Day</label>
@@ -333,19 +322,19 @@
           <div>
             <label>글 유형(템플릿)</label>
             <select id="postType">
-              <option value="전환형-비교결단">전환형-비교결단 (돈되는 글)</option>
-              <option value="전환형-실패경고">전환형-실패경고 (전환 최고)</option>
-              <option value="전환형-위기대응">전환형-위기대응 (기각/압류/폐지)</option>
-              <option value="신뢰형-승인사례">신뢰형-승인사례 (안도감/신뢰)</option>
-              <option value="SEO형-기본정보">SEO형-기본정보 (유입용)</option>
+              <option value="전환형-비교결단">전환형-비교결단</option>
+              <option value="전환형-실패경고">전환형-실패경고</option>
+              <option value="전환형-위기대응">전환형-위기대응</option>
+              <option value="신뢰형-승인사례">신뢰형-승인사례</option>
+              <option value="SEO형-기본정보">SEO형-기본정보</option>
             </select>
           </div>
           <div>
             <label>키워드 의도</label>
             <select id="intent">
-              <option value="고의도">고의도 (상담 직전)</option>
-              <option value="중의도">중의도 (문제 해결)</option>
-              <option value="저의도">저의도 (기초 정보)</option>
+              <option value="고의도">고의도</option>
+              <option value="중의도">중의도</option>
+              <option value="저의도">저의도</option>
             </select>
           </div>
         </div>
@@ -371,8 +360,9 @@
         <div class="sep"></div>
 
         <div class="warnbox">
-          <b>전환 최소 조건</b><br>
-          ① CTA 3개(중간/FAQ뒤/말미) ② 내부링크 5개 ③ FAQ 5개(Q1~Q5) 고정 ④ 과장/단정 금지
+          <b>고정 규칙(프롬프트에도 반영됨)</b><br>
+          ① H2 7개 고정 ② H2#1~#6 하위 H3 최소 1개 ③ H2#7 하위 H3 금지<br>
+          ④ FAQ는 Q1~Q5 “5개 고정” ⑤ CTA 3개 분산( H2#2 / H2#4 / FAQ 2개 이후 )
         </div>
 
         <div class="sep"></div>
@@ -382,7 +372,7 @@
             <div class="metric">
               <div>
                 <div class="k">CTA 클릭(수기)</div>
-                <div class="tiny">대충이라도 기록</div>
+                <div class="tiny">오늘 기록</div>
               </div>
               <div class="v" id="ctaClicksVal">0</div>
             </div>
@@ -395,7 +385,7 @@
             <div class="metric">
               <div>
                 <div class="k">문의/리드(수기)</div>
-                <div class="tiny">폼/카톡/전화 등</div>
+                <div class="tiny">폼/카톡/전화</div>
               </div>
               <div class="v" id="leadsVal">0</div>
             </div>
@@ -424,10 +414,28 @@
 
         <div style="height:10px"></div>
         <button class="btn" id="btnSave">저장</button>
+
+        <div class="sep"></div>
+
+        <!-- NEW: Prompt Generator -->
+        <div class="promptBox">
+          <div class="row" style="justify-content:space-between; align-items:center">
+            <div style="font-weight:900">프롬프트 자동 생성</div>
+            <div class="promptActions">
+              <button class="btn good" id="btnMakePrompt">프롬프트 생성</button>
+              <button class="btn" id="btnCopyPrompt">복사</button>
+            </div>
+          </div>
+          <div class="tiny" style="margin-top:6px">
+            선택한 Day의 <span class="mono">제목///키워드</span>·유형·의도 값을 반영해 “개인회생 글 생성 프롬프트”를 만든다.
+          </div>
+          <textarea class="promptText" id="promptText" spellcheck="false" placeholder="여기에 프롬프트가 생성됩니다."></textarea>
+        </div>
+
       </div>
     </section>
 
-    <!-- RIGHT: Dashboard / Calendar -->
+    <!-- RIGHT -->
     <section class="panel">
       <div class="hd">
         <h2>90일 캘린더 & 필터</h2>
@@ -445,12 +453,12 @@
             <div class="metric">
               <div>
                 <div class="k">이번 주 목표</div>
-                <div class="tiny">주 14~21포 기준</div>
+                <div class="tiny">주 14포 기준</div>
               </div>
               <div class="v" id="weekTarget">14</div>
             </div>
             <div class="sep"></div>
-            <div class="tiny">※ 글이 무제한이면 “전환형(고의도)” 비중만 유지하면 됨</div>
+            <div class="tiny">3포/일이면 목표 초과 가능</div>
           </div>
 
           <div class="card">
@@ -469,7 +477,7 @@
             <div class="metric">
               <div>
                 <div class="k">내부링크 규율</div>
-                <div class="tiny">체크 충족 Day</div>
+                <div class="tiny">link5 체크 Day</div>
               </div>
               <div class="v" id="linkDiscipline">0</div>
             </div>
@@ -515,10 +523,9 @@
         <div class="card">
           <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
             <div>
-              <div style="font-weight:900;font-size:13px;margin-bottom:6px">운영 원칙 (광고비 0원 버전)</div>
+              <div style="font-weight:900;font-size:13px;margin-bottom:6px">운영 원칙</div>
               <div class="hint">
-                ① 돈되는 글(고의도/전환형) 먼저 ② 내부링크를 허브(“승인확률/변호사비용”)로 모으기
-                ③ FAQ 5개(Q1~Q5) 고정 ④ CTA는 “위험 회피(기각/압류/지연)” 기반
+                ① 고의도/전환형 먼저 ② FAQ 5개(Q1~Q5) 고정 ③ CTA 분산 3개 ④ 과장/단정 금지
               </div>
             </div>
             <div class="chips">
@@ -534,17 +541,16 @@
   </main>
 
   <div class="footer-note">
-    ⚠️ 본 대시보드는 “작성/운영용” 도구입니다. 법률 자문이 아닙니다. 데이터는 이 브라우저에 저장됩니다.
+    ⚠️ 본 대시보드는 운영 도구입니다. 법률 자문이 아닙니다. 데이터는 이 브라우저에 저장됩니다.
   </div>
 
 <script>
 (() => {
-  const STORAGE_KEY = "lawgear_pacemaker_rehab_90d_v1";
+  const STORAGE_KEY = "lawgear_pacemaker_rehab_90d_v2_prompt";
 
-  // ---------- Defaults ----------
   const defaultChecklist = [
-    { key:"cta3", title:"CTA 3개 삽입", desc:"중간 / FAQ 2개 이후 / 말미 (CTA 뒤에 본문 p 1개)" },
-    { key:"faq5", title:"FAQ 5개 고정", desc:"Q1~Q5 형식 고정, 질문/답변 개수 절대 변경 금지" },
+    { key:"cta3", title:"CTA 3개 삽입", desc:"H2#2 / H2#4 / FAQ 2개 이후 (CTA 뒤 p 1개)" },
+    { key:"faq5", title:"FAQ 5개 고정", desc:"Q1~Q5 형식 고정, 질문/답변 개수 변경 금지" },
     { key:"link5", title:"내부링크 5개", desc:"허브글(변호사비용/승인확률)로 2개 이상 연결" },
     { key:"noHype", title:"과장/단정 금지", desc:"100%/무조건/확정 표현 금지, 케이스별 다름 명시" },
     { key:"proof", title:"근거/절차 명시", desc:"법원/절차/서류 흐름이 보이게 작성" },
@@ -553,7 +559,6 @@
   const conversionTypes = new Set(["전환형-비교결단","전환형-실패경고","전환형-위기대응"]);
 
   const seedTitles = [
-    // 1~15 고의도/전환형(돈되는 글)
     "개인회생 변호사 비용 비교///개인회생 변호사 비용",
     "개인회생 수임료 평균과 추가비용 함정///개인회생 수임료",
     "개인회생 승인확률 올리는 핵심 5가지///개인회생 승인확률",
@@ -569,7 +574,6 @@
     "개인회생 통장압류 풀리는 시점과 대응///개인회생 통장압류",
     "개인회생 채권자 이의신청 들어오면///개인회생 이의신청",
     "개인회생 보정권고 대응 못 하면 생기는 일///개인회생 보정권고",
-    // 16~30 중의도/위기대응 + 신뢰
     "개인회생 서류 준비 체크리스트///개인회생 준비서류",
     "개인회생 신청자격 조건 한 번에 정리///개인회생 신청자격",
     "개인회생 절차 기간 단계별 일정///개인회생 절차",
@@ -587,10 +591,8 @@
     "개인회생 이후 신용회복 기간 정리///개인회생 신용회복",
   ];
 
-  // ---------- State ----------
   const state = loadState();
 
-  // ---------- Elements ----------
   const el = {
     startDate: document.getElementById("startDate"),
     daySelect: document.getElementById("daySelect"),
@@ -625,15 +627,17 @@
     weekTarget: document.getElementById("weekTarget"),
     convRatio: document.getElementById("convRatio"),
     linkDiscipline: document.getElementById("linkDiscipline"),
+    // NEW
+    btnMakePrompt: document.getElementById("btnMakePrompt"),
+    btnCopyPrompt: document.getElementById("btnCopyPrompt"),
+    promptText: document.getElementById("promptText"),
   };
 
-  // ---------- Init ----------
   initStartDate();
   initDaySelect();
   bindEvents();
   renderAll();
 
-  // ---------- Functions ----------
   function initStartDate(){
     if(!state.startDate){
       state.startDate = formatDate(new Date());
@@ -657,8 +661,7 @@
     el.daySelect.addEventListener("change", () => {
       state.selectedDay = Number(el.daySelect.value);
       saveState();
-      renderEditor();
-      renderCalendar();
+      renderAll();
     });
 
     el.startDate.addEventListener("change", () => {
@@ -738,13 +741,35 @@
     el.search.addEventListener("input", () => { state.search = el.search.value; saveState(); renderCalendar(); });
     el.typeFilter.addEventListener("change", () => { state.typeFilter = el.typeFilter.value; saveState(); renderCalendar(); });
     el.intentFilter.addEventListener("change", () => { state.intentFilter = el.intentFilter.value; saveState(); renderCalendar(); });
+
+    // NEW: prompt
+    el.btnMakePrompt.addEventListener("click", () => {
+      applyEditorToDay();
+      const d = getDay(state.selectedDay);
+      el.promptText.value = buildPrompt(d, state.selectedDay);
+      saveState();
+      renderStats();
+      renderCalendar();
+    });
+
+    el.btnCopyPrompt.addEventListener("click", async () => {
+      const text = el.promptText.value || "";
+      if(!text.trim()) return alert("복사할 프롬프트가 없습니다. 먼저 생성하세요.");
+      try{
+        await navigator.clipboard.writeText(text);
+        alert("프롬프트를 복사했습니다.");
+      }catch(e){
+        el.promptText.select();
+        document.execCommand("copy");
+        alert("프롬프트를 복사했습니다.");
+      }
+    });
   }
 
   function renderAll(){
     renderStats();
     renderEditor();
     renderCalendar();
-    // restore filters
     el.search.value = state.search || "";
     el.typeFilter.value = state.typeFilter || "all";
     el.intentFilter.value = state.intentFilter || "all";
@@ -756,31 +781,23 @@
     const done = state.days.filter(d => d.done).length;
     const pct = Math.round((done/90)*100);
     const leadsSum = state.days.reduce((a,d)=>a+(Number(d.leads)||0),0);
-    const ctaSum = state.days.reduce((a,d)=>a+(Number(d.ctaClicks)||0),0);
 
     el.doneCount.textContent = String(done);
     el.progressPct.textContent = `${pct}%`;
     el.leadCount.textContent = String(leadsSum);
 
-    // conversion ratio
     const convCount = state.days.filter(d => conversionTypes.has(d.postType)).length;
     const convPct = Math.round((convCount/90)*100);
     el.convRatio.textContent = `${convPct}%`;
 
-    // link discipline: days where link5 is checked
     const linkDays = state.days.filter(d => d.checks?.link5 === true).length;
     el.linkDiscipline.textContent = String(linkDays);
 
-    // week target (simple): 14 baseline, but if user can do 3/day, recommend 18
     el.weekTarget.textContent = "14";
 
-    // show selected day cta/leads
     const cur = getDay(state.selectedDay);
     el.ctaClicksVal.textContent = String(cur.ctaClicks||0);
     el.leadsVal.textContent = String(cur.leads||0);
-
-    // hint: if no leads for long
-    // (no hard behavior, just display numbers)
   }
 
   function renderEditor(){
@@ -795,7 +812,6 @@
     el.ctaClicks.value = d.ctaClicks ?? 0;
     el.leads.value = d.leads ?? 0;
 
-    // checklist
     el.checklist.innerHTML = "";
     const checks = d.checks || {};
     defaultChecklist.forEach(item => {
@@ -852,7 +868,6 @@
     for(let i=1;i<=90;i++){
       const d = getDay(i);
 
-      // filters
       if(filter === "done" && !d.done) continue;
       if(filter === "todo" && d.done) continue;
       if(filter === "leads" && !(Number(d.leads)||0)) continue;
@@ -898,7 +913,6 @@
 
       const mini = document.createElement("div");
       mini.className="mini";
-
       if(d.intent) mini.appendChild(tag(d.intent));
       if(d.postType) mini.appendChild(tag(shortType(d.postType)));
       if(d.titleKeyword){
@@ -912,11 +926,7 @@
     }
   }
 
-  function tag(text){
-    const s = document.createElement("span");
-    s.textContent = text;
-    return s;
-  }
+  function tag(text){ const s = document.createElement("span"); s.textContent = text; return s; }
   function clip(s,n){ return s.length>n ? s.slice(0,n)+"…" : s; }
   function shortType(t){
     if(t.startsWith("전환형-")) return t.replace("전환형-","전환/");
@@ -926,8 +936,6 @@
   }
 
   function autoFill90Days(){
-    // only fill empty titleKeyword; keep user-edited days
-    // day 1~30: seedTitles (provided)
     for(let i=1;i<=90;i++){
       const d = getDay(i);
       if(d.titleKeyword && d.titleKeyword.trim()) continue;
@@ -935,91 +943,141 @@
       if(i<=seedTitles.length){
         d.titleKeyword = seedTitles[i-1];
       }else{
-        // generate pattern after 30: mix high-intent / mid / seo
         const idx = i - seedTitles.length;
         const pack = generateKeywordPack(idx);
         d.titleKeyword = `${pack.title}///${pack.keyword}`;
       }
 
-      // assign intent/type ratio:
-      // 1~45: conversion heavy (60%), then stabilize (50%)
       const r = (i<=45) ? i % 10 : i % 12;
       if(i<=45){
-        if(r<=5){
-          d.intent="고의도";
-          d.postType = (r%2===0) ? "전환형-실패경고" : "전환형-비교결단";
-        }else if(r<=8){
-          d.intent="중의도";
-          d.postType = "전환형-위기대응";
-        }else{
-          d.intent="저의도";
-          d.postType = "SEO형-기본정보";
-        }
+        if(r<=5){ d.intent="고의도"; d.postType = (r%2===0) ? "전환형-실패경고" : "전환형-비교결단"; }
+        else if(r<=8){ d.intent="중의도"; d.postType = "전환형-위기대응"; }
+        else{ d.intent="저의도"; d.postType = "SEO형-기본정보"; }
       }else{
-        if(r<=4){
-          d.intent="고의도";
-          d.postType = (r%2===0) ? "전환형-비교결단" : "전환형-실패경고";
-        }else if(r<=8){
-          d.intent="중의도";
-          d.postType = (r%2===0) ? "전환형-위기대응" : "신뢰형-승인사례";
-        }else{
-          d.intent="저의도";
-          d.postType = "SEO형-기본정보";
-        }
+        if(r<=4){ d.intent="고의도"; d.postType = (r%2===0) ? "전환형-비교결단" : "전환형-실패경고"; }
+        else if(r<=8){ d.intent="중의도"; d.postType = (r%2===0) ? "전환형-위기대응" : "신뢰형-승인사례"; }
+        else{ d.intent="저의도"; d.postType = "SEO형-기본정보"; }
       }
 
-      // initialize checklist defaults false
       if(!d.checks) d.checks = {};
       defaultChecklist.forEach(x => { if(typeof d.checks[x.key] !== "boolean") d.checks[x.key] = false; });
     }
   }
 
   function generateKeywordPack(i){
-    // Simple deterministic generator for rehab niche
-    const themes = [
-      ["개인회생", "개인회생"],
-      ["개인회생", "개인회생"],
-      ["개인회생", "개인회생"],
-      ["개인회생", "개인회생"],
-    ];
     const angles = [
-      ["비용", "비용"],
-      ["변제금", "변제금"],
-      ["기각", "기각"],
-      ["금지명령", "금지명령"],
-      ["폐지", "폐지"],
-      ["재신청", "재신청"],
-      ["보정", "보정명령"],
-      ["서류", "준비서류"],
-      ["기간", "기간"],
-      ["배우자", "배우자 재산"],
-      ["통장압류", "통장압류"],
-      ["채권자", "채권자 이의신청"],
-      ["소득", "소득증빙"],
-      ["재산", "재산 목록"],
-      ["변제계획", "변제계획안"],
+      ["비용", "비용"], ["변제금", "변제금"], ["기각", "기각"], ["금지명령", "금지명령"],
+      ["폐지", "폐지"], ["재신청", "재신청"], ["보정", "보정명령"], ["서류", "준비서류"],
+      ["기간", "기간"], ["배우자", "배우자 재산"], ["통장압류", "통장압류"], ["채권자", "채권자 이의신청"],
+      ["소득", "소득증빙"], ["재산", "재산 목록"], ["변제계획", "변제계획안"],
     ];
     const verbs = [
-      ["한 번에 정리", "정리"],
-      ["자주 묻는 질문", "FAQ"],
-      ["실패하는 이유", "실패 이유"],
-      ["피하는 방법", "예방"],
-      ["가능 여부", "가능"],
-      ["현실 기준", "기준"],
-      ["체크리스트", "체크리스트"],
-      ["사례로 보는", "사례"],
-      ["주의할 점", "주의"],
-      ["바로잡는 법", "대응"],
-      ["필수 준비", "준비"],
+      ["한 번에 정리", "정리"], ["실패하는 이유", "실패 이유"], ["피하는 방법", "예방"],
+      ["가능 여부", "가능"], ["현실 기준", "기준"], ["체크리스트", "체크리스트"],
+      ["주의할 점", "주의"], ["대응 방법", "대응"], ["필수 준비", "준비"],
     ];
-
     const ang = angles[i % angles.length];
     const vb = verbs[i % verbs.length];
-    const base = themes[0];
-
-    const title = `${base[0]} ${ang[0]} ${vb[0]}`;
-    const keyword = `${base[1]} ${ang[1]}`;
+    const title = `개인회생 ${ang[0]} ${vb[0]}`;
+    const keyword = `개인회생 ${ang[1]}`;
     return {title, keyword};
+  }
+
+  // NEW: Prompt builder
+  function buildPrompt(dayData, dayNumber){
+    const tk = (dayData.titleKeyword || "").trim();
+    const parts = tk.split("///");
+    const seoTitle = (parts[0] || "").trim();
+    const mainKeyword = (parts[1] || parts[0] || "").trim();
+
+    const type = dayData.postType || "전환형-비교결단";
+    const intent = dayData.intent || "고의도";
+
+    const toneGuide = (() => {
+      if(type === "전환형-실패경고") return "긴장감(리스크 회피) 중심으로, 독자를 겁주지 말고 ‘손해 최소화’로 설득";
+      if(type === "전환형-비교결단") return "비교표/체크리스트로 ‘지금 결정’이 쉬워지게 설계";
+      if(type === "전환형-위기대응") return "지금 당장 필요한 대응 순서(1~5단계)로 안정감 주기";
+      if(type === "신뢰형-승인사례") return "사례 기반으로 불안 완화 + 신뢰 구축(조건/한계도 함께)";
+      return "기초 정의→절차→주의점→다음 행동으로 깔끔하게";
+    })();
+
+    const intentGuide = (() => {
+      if(intent === "고의도") return "상담/제휴 전환에 가까운 독자. 비용/기간/기각/압류 같은 ‘즉시 해결 욕구’ 강조";
+      if(intent === "중의도") return "문제 해결 탐색 단계. 절차/서류/보정 같은 ‘준비 행동’ 강조";
+      return "입문 단계. 용어/기본 요건/흐름을 쉽게";
+    })();
+
+    // v1.6 Patch rules (hard)
+    const hardRules = [
+      "H2는 총 7개 고정: #1~#5 본문, #6 FAQ, #7 마무리",
+      "H3는 반드시 포함: H2 #1~#6 각각 아래 H3 최소 1개(필수), H2 #7 아래 H3 금지",
+      "H2/H3 뒤에는 p 1개 이상 필수. 문단 길면 2~3문장마다 <br><br> 삽입",
+      "CTA 총 3개 분산: CTA#1은 H2#2 내부(H3 이후 p 1개 뒤), CTA#2는 H2#4 내부(H3 이후 p 1개 뒤), CTA#3는 FAQ(H2#6) 카드 2개 이상 나온 뒤(면책 조항 직전)",
+      "CTA 바로 뒤에 <h2> 금지. CTA 뒤에는 일반 <p> 1개 이상 먼저 배치",
+      "애드센스 2회 고정: 목차 직후 1회, H2#3 전후 1회 / data-ad-client, slot 값 고정 / <script>, onclick 금지",
+      "FAQ는 Q1~Q5 정확히 5개 고정(형식 통일)",
+      "과장/단정 표현 금지(100%, 무조건, 확정 등 금지) + ‘사안별 다를 수 있음’ 명시",
+    ].join("\n- ");
+
+    const ctaPsych = [
+      "CTA 문구는 ‘지금 안 하면 생기는 손해’(기각/지연/압류/보정 실패)를 짧게 암시하고, 버튼 텍스트는 행동 1개로 명확히",
+      "버튼 위에 1문장 ‘완충 p’로 필요성(왜 지금) 만들어라",
+      "버튼 아래에 1문장 ‘완충 p’로 안심(과장 없이) 제공",
+    ].join("\n- ");
+
+    const outputSpec = [
+      "출력은 HTML 본문으로만(최상단 wrapper div 포함 가능)",
+      "목차 포함",
+      "비교표 1개 포함(전환형-비교결단일 때는 반드시)",
+      "면책 조항 포함(마지막에)",
+      "해시태그는 맨 아래 10개 내외",
+    ].join("\n- ");
+
+    return [
+`[역할]
+너는 ‘개인회생’ 생활법률 머니사이트용 콘텐츠 엔진이다. 목표는 SEO 유입 + 제휴 전환(상담/문의)이다.
+
+[오늘 Day]
+- Day: ${dayNumber}
+- 글유형: ${type}
+- 의도: ${intent}
+- SEO 제목: ${seoTitle || "(제목을 입력하세요)"}
+- 메인 키워드: ${mainKeyword || "(키워드를 입력하세요)"}
+
+[톤/설계 가이드]
+- 글 톤: ${toneGuide}
+- 독자 상태: ${intentGuide}
+
+[하드 규칙(절대 위반 금지)]
+- ${hardRules}
+
+[CTA 심리 설계(강제 적용)]
+- ${ctaPsych}
+
+[콘텐츠 출력 스펙]
+- ${outputSpec}
+
+[H2 구성(고정)]
+H2 #1: (문제 공감 + 지금 왜 급한지)
+H2 #2: (핵심 법적/절차 근거 + CTA#1 삽입)
+H2 #3: (준비물/서류/절차 단계)
+H2 #4: (선택지 비교/결정 가이드 + CTA#2 삽입)
+H2 #5: (비용/기간/기각 리스크/결과 예측 - 케이스별 범위로)
+H2 #6: (FAQ 5개 고정: Q1~Q5) — FAQ 2개 출력 후 CTA#3 삽입
+H2 #7: (마무리: 다음 행동 제시 + 면책 조항)
+
+[FAQ 고정 질문(그대로 사용)]
+Q1. 개인회생 신청 자격이 애매하면 어디서부터 확인하나요?
+Q2. 개인회생 변호사 비용은 왜 차이가 나나요?
+Q3. 보정명령/보정권고가 나오면 어떻게 대응해야 하나요?
+Q4. 금지명령이 늦어지면 압류/추심이 계속되나요?
+Q5. 기각/폐지된 뒤 재신청은 언제 가능한가요?
+
+[생성 지시]
+위 조건을 모두 만족하는 HTML 본문을 작성해라. 
+키워드(${mainKeyword})는 본문에 자연스럽게 반복하되, 과장/단정은 금지한다.
+`.trim()
+    ].join("\n");
   }
 
   function exportJSON(){
@@ -1041,7 +1099,6 @@
         if(s && Array.isArray(s.days) && s.days.length === 90) return normalizeState(s);
       }catch(e){}
     }
-    // create fresh
     const days = Array.from({length:90}).map((_,i)=>({
       day: i+1,
       done:false,
@@ -1055,7 +1112,7 @@
       leads:0,
       checks: Object.fromEntries(defaultChecklist.map(x=>[x.key,false])),
     }));
-    const fresh = {
+    return normalizeState({
       startDate:"",
       selectedDay:1,
       filter:"all",
@@ -1063,8 +1120,7 @@
       typeFilter:"all",
       intentFilter:"all",
       days,
-    };
-    return normalizeState(fresh);
+    });
   }
 
   function normalizeState(s){
@@ -1076,7 +1132,6 @@
     if(!s.days || s.days.length !== 90){
       s.days = Array.from({length:90}).map((_,i)=>({day:i+1}));
     }
-    // ensure each day has required fields
     s.days = s.days.map((d,i)=>({
       day: i+1,
       done: !!d.done,
@@ -1099,13 +1154,8 @@
     return obj;
   }
 
-  function saveState(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
-  function getDay(n){
-    return state.days[n-1];
-  }
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function getDay(n){ return state.days[n-1]; }
 
   // Date helpers
   function parseDate(s){
@@ -1115,11 +1165,7 @@
     if(isNaN(d.getTime())) return new Date();
     return d;
   }
-  function addDays(date, days){
-    const d = new Date(date);
-    d.setDate(d.getDate()+days);
-    return d;
-  }
+  function addDays(date, days){ const d = new Date(date); d.setDate(d.getDate()+days); return d; }
   function formatDate(d){
     const y = d.getFullYear();
     const m = String(d.getMonth()+1).padStart(2,"0");
