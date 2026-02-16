@@ -1,1190 +1,1058 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>LawGear Pacemaker — 개인회생 90일 전환 대시보드</title>
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#0f1730;
-      --card:#111c3a;
-      --muted:#aab6d3;
-      --text:#e9eeff;
-      --line:rgba(255,255,255,.10);
-      --good:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
-      --info:#60a5fa;
-      --chip:#1b2a55;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Noto Sans KR", Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 20% -10%, rgba(96,165,250,.25), transparent 60%),
-                  radial-gradient(900px 600px at 85% 5%, rgba(34,197,94,.18), transparent 55%),
-                  radial-gradient(1000px 700px at 50% 110%, rgba(245,158,11,.18), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      line-height:1.45;
-    }
-    header{
-      padding:28px 16px 10px;
-      max-width:1200px;
-      margin:0 auto;
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:flex-end;
-      justify-content:space-between;
-    }
-    .title{display:flex; gap:12px; align-items:center;}
-    .logo{
-      width:44px;height:44px;border-radius:14px;
-      background: linear-gradient(135deg, rgba(96,165,250,.95), rgba(34,197,94,.85));
-      box-shadow: var(--shadow);
-      display:grid; place-items:center;
-      font-weight:900;
-      color:#071026;
-    }
-    h1{margin:0;font-size:18px;letter-spacing:.2px}
-    .subtitle{margin:4px 0 0;color:var(--muted);font-size:12px}
-    .top-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    button, .btn{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      transition:.15s ease;
-      font-weight:700;
-      font-size:13px;
-    }
-    button:hover, .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
-    button:active{transform: translateY(0)}
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(245,158,11,.95), rgba(239,68,68,.85));
-      border: none;
-      color:#0b1020;
-    }
-    .btn.good{
-      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(96,165,250,.75));
-      border:none;color:#0b1020;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Gear: 머니사이트 빌드업 로드맵 (Pacemaker Edition)</title>
+    <!-- 파비콘 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z'/><path d='m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z'/><path d='M7 21h10'/><path d='M12 3v18'/><path d='M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2'/></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .card-hover { transition: all 0.2s ease-in-out; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    main{
-      max-width:1200px;
-      margin:0 auto;
-      padding: 10px 16px 40px;
-      display:grid;
-      grid-template-columns: 380px 1fr;
-      gap:14px;
-    }
-    @media (max-width: 980px){ main{grid-template-columns: 1fr} }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    .panel{
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .panel .hd{
-      padding:14px 14px 10px;
-      border-bottom:1px solid var(--line);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .panel .hd h2{font-size:13px;margin:0;letter-spacing:.2px;}
-    .panel .bd{padding:14px}
-
-    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    .grid3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
-    .card{
-      background: rgba(17,28,58,.75);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:16px;
-      padding:12px;
-    }
-    .metric{display:flex; justify-content:space-between; align-items:flex-end; gap:10px;}
-    .metric .k{font-size:12px;color:var(--muted);font-weight:700}
-    .metric .v{font-size:18px;font-weight:900}
-    .tiny{font-size:11px;color:var(--muted)}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{
-      background: rgba(27,42,85,.85);
-      border:1px solid rgba(255,255,255,.08);
-      color:var(--text);
-      padding:7px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      display:flex;gap:8px;align-items:center;
-      cursor:pointer;
-      user-select:none;
-    }
-    .chip[data-active="true"]{outline:2px solid rgba(96,165,250,.65)}
-    .dot{width:8px;height:8px;border-radius:999px}
-    .dot.good{background:var(--good)}
-    .dot.warn{background:var(--warn)}
-    .dot.bad{background:var(--bad)}
-    .dot.info{background:var(--info)}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-
-    input[type="text"], input[type="number"], textarea, select{
-      width:100%;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:13px;
-      outline:none;
-    }
-    textarea{min-height:90px; resize:vertical}
-    label{font-size:12px;color:var(--muted);font-weight:800; display:block; margin:0 0 6px}
-    .sep{height:1px;background:var(--line);margin:12px 0}
-    .hint{font-size:12px;color:rgba(233,238,255,.82)}
-    .hint b{color:var(--text)}
-    .warnbox{
-      border:1px solid rgba(245,158,11,.35);
-      background: rgba(245,158,11,.10);
-      padding:10px 12px;
-      border-radius:14px;
-      color: rgba(233,238,255,.92);
-      font-size:12px;
-      font-weight:700;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      font-size:12px;
-      font-weight:900;
-    }
-
-    /* Calendar */
-    .calendar{display:grid;grid-template-columns: repeat(10, 1fr);gap:8px;}
-    @media (max-width: 980px){ .calendar{grid-template-columns: repeat(6, 1fr)} }
-    .day{
-      background: rgba(17,28,58,.72);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:14px;
-      padding:10px 10px 8px;
-      cursor:pointer;
-      position:relative;
-      min-height:74px;
-      transition:.12s ease;
-    }
-    .day:hover{transform: translateY(-1px); background: rgba(17,28,58,.92)}
-    .day.selected{outline:2px solid rgba(96,165,250,.75)}
-    .day .num{
-      font-weight:900;
-      font-size:12px;
-      color: rgba(233,238,255,.92);
-      display:flex; justify-content:space-between; align-items:center;
-    }
-    .badge{
-      font-size:10px;
-      padding:4px 7px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: rgba(233,238,255,.86);
-      font-weight:900;
-    }
-    .badge.good{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12)}
-    .badge.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.12)}
-    .badge.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.12)}
-    .day .mini{margin-top:8px;font-size:10px;color: rgba(170,182,211,.95);display:flex; gap:6px; flex-wrap:wrap;}
-    .mini span{background: rgba(27,42,85,.75);border:1px solid rgba(255,255,255,.08);padding:4px 6px;border-radius:999px;font-weight:800;}
-
-    .checklist{display:grid;gap:8px;}
-    .check{
-      display:flex; gap:10px; align-items:flex-start;
-      padding:10px 10px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-    }
-    .check input{margin-top:2px}
-    .check .t{font-weight:900;font-size:13px}
-    .check .d{font-size:11px;color:var(--muted);margin-top:2px}
-
-    /* Prompt box */
-    .promptBox{
-      background: rgba(10,16,34,.65);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:16px;
-      padding:12px;
-    }
-    .promptActions{display:flex;gap:8px;flex-wrap:wrap}
-    .promptText{
-      width:100%;
-      min-height:220px;
-      margin-top:10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size:12px;
-      line-height:1.55;
-    }
-
-    .footer-note{
-      max-width:1200px;
-      margin:0 auto;
-      padding: 0 16px 24px;
-      color: rgba(170,182,211,.95);
-      font-size:12px;
-    }
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
-  </style>
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Level Badge Animation */
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
+        .level-badge { animation: pulse-ring 2s infinite; }
+    </style>
 </head>
-<body>
-  <header>
-    <div class="title">
-      <div class="logo">LG</div>
-      <div>
-        <h1>LawGear Pacemaker — 개인회생 90일 전환 대시보드</h1>
-        <div class="subtitle">광고비 0원 / 블로그만으로 전환 테스트 → 확장. (데이터는 브라우저 <span class="mono">localStorage</span>에 저장)</div>
-      </div>
+<body class="flex flex-col min-h-screen bg-slate-50">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8 h-16 flex items-center justify-between card-shadow">
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="switchView('dashboard')">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-indigo-700 transition-colors">
+                <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <h1 class="text-xl font-bold text-slate-800 hidden md:block group-hover:text-indigo-700 transition-colors">Law Gear <span class="text-indigo-600">Pacemaker</span></h1>
+        </div>
+        <div class="flex items-center gap-2 md:gap-4">
+            <!-- Global Progress (Desktop) -->
+            <div class="hidden lg:flex items-center gap-2 text-sm font-medium text-slate-600 mr-4">
+                <span>Total Exp:</span>
+                <div class="w-32 h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="globalProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <span id="globalProgressText" class="text-indigo-600 font-bold">0%</span>
+            </div>
+
+            <!-- Mobile/Desktop Nav -->
+            <button onclick="switchView('dashboard')" class="nav-btn bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition-colors flex items-center gap-2" title="홈">
+                <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">홈</span>
+            </button>
+            <button onclick="switchView('roadmap')" class="nav-btn text-slate-600 hover:text-indigo-600 px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2" title="로드맵">
+                <i class="fa-solid fa-map"></i> <span class="hidden sm:inline">로드맵</span>
+            </button>
+            <button onclick="switchView('library')" class="nav-btn text-slate-600 hover:text-indigo-600 px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center gap-2" title="전체 목록">
+                <i class="fa-solid fa-list"></i> <span class="hidden sm:inline">라이브러리</span>
+            </button>
+            <button onclick="switchView('settings')" class="nav-btn text-slate-400 hover:text-slate-600 px-3 py-2 transition-colors" title="설정/캐시삭제">
+                <i class="fa-solid fa-gear text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full p-4 lg:p-8">
+
+        <!-- VIEW 1: DASHBOARD (GAMIFIED) -->
+        <div id="dashboard-view" class="space-y-8 animate-fade-in">
+            
+            <!-- Top Status Bar: Level & Money Power -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 1. My Level Card -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow flex items-center gap-6 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-24 h-24 bg-indigo-50 rounded-full blur-2xl -mr-6 -mt-6"></div>
+                    <div class="relative z-10">
+                        <div id="levelBadge" class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl shadow-inner border-4 border-slate-200 text-slate-400">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 z-10">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Current Rank</p>
+                        <h2 id="currentLevelName" class="text-2xl font-bold text-slate-800">초보 블로거</h2>
+                        <div class="mt-2">
+                            <div class="flex justify-between text-xs font-medium text-slate-500 mb-1">
+                                <span>다음 레벨까지</span>
+                                <span id="expText">0 / 20 posts</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div id="levelProgressBar" class="h-full bg-indigo-500 rounded-full transition-all duration-700" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Revenue Power Card -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute right-0 bottom-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl -mr-10 -mb-10"></div>
+                    <div class="flex justify-between items-start z-10">
+                        <div>
+                            <p class="text-xs font-bold text-emerald-600 uppercase mb-1"><i class="fa-solid fa-bolt mr-1"></i>머니 파워 (Money Power)</p>
+                            <h3 class="text-3xl font-bold text-slate-800" id="moneyPowerScore">0</h3>
+                            <p class="text-xs text-slate-400 mt-1">발행된 글의 수익 가치 총합</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-4xl text-emerald-200"><i class="fa-solid fa-chart-line"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Recent Activity Log -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow flex flex-col relative overflow-hidden">
+                    <h3 class="text-sm font-bold text-slate-500 uppercase mb-3"><i class="fa-solid fa-clock-rotate-left mr-1"></i>최근 정복한 퀘스트</h3>
+                    <div id="recentActivityList" class="flex-1 overflow-y-auto space-y-3 max-h-24 pr-2">
+                        <p class="text-xs text-slate-400 italic">아직 활동 내역이 없습니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Stats -->
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2 mt-4">
+                <i class="fa-solid fa-layer-group text-indigo-500"></i> 분야별 점령 현황
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:border-amber-400 transition-colors cursor-pointer group" onclick="filterLibrary('Traffic')">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">TRAFFIC</span>
+                        <i class="fa-solid fa-car text-amber-200 text-xl group-hover:text-amber-500 transition-colors"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800" id="stat-traffic">0/40</div>
+                    <div class="text-xs text-slate-400 mt-1">교통/사고</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 transition-colors cursor-pointer group" onclick="filterLibrary('Debt')">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">DEBT</span>
+                        <i class="fa-solid fa-file-invoice-dollar text-indigo-200 text-xl group-hover:text-indigo-500 transition-colors"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800" id="stat-debt">0/40</div>
+                    <div class="text-xs text-slate-400 mt-1">빚/회생</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:border-emerald-400 transition-colors cursor-pointer group" onclick="filterLibrary('Housing')">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">HOUSING</span>
+                        <i class="fa-solid fa-house-chimney text-emerald-200 text-xl group-hover:text-emerald-500 transition-colors"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800" id="stat-housing">0/40</div>
+                    <div class="text-xs text-slate-400 mt-1">주거/생활</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:border-rose-400 transition-colors cursor-pointer group" onclick="filterLibrary('Crime')">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded">CRIME</span>
+                        <i class="fa-solid fa-user-shield text-rose-200 text-xl group-hover:text-rose-500 transition-colors"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800" id="stat-crime">0/40</div>
+                    <div class="text-xs text-slate-400 mt-1">사기/범죄</div>
+                </div>
+            </div>
+
+            <!-- Analysis Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 card-shadow">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider">Strategic Radar</h3>
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 card-shadow">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider">Content Structure</h3>
+                    <div id="sunburstChart" class="w-full h-[300px] md:h-[400px]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: ROADMAP -->
+        <div id="roadmap-view" class="hidden space-y-8 animate-fade-in">
+            <!-- Today's Mission Banner -->
+            <div class="bg-gradient-to-r from-indigo-900 to-slate-800 rounded-2xl p-6 md:p-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex-1 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-indigo-200 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-flag-checkered"></i> Next Step
+                    </div>
+                    <h2 id="currentPhaseTitle" class="text-2xl md:text-3xl font-bold leading-tight">Lv.1 기초 공사</h2>
+                    <p id="currentPhaseDesc" class="text-slate-300 text-sm md:text-base">블로그 지수를 쌓는 단계입니다. 검색량은 적지만 전환이 쉬운 생활 법률 키워드로 '유효타'를 만드세요.</p>
+                    <div class="flex gap-3 pt-2">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-slate-400 uppercase">발행된 글</span>
+                            <span class="text-2xl font-bold" id="totalPublishedCount">0</span>
+                        </div>
+                        <div class="w-px h-10 bg-slate-600 mx-2"></div>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-slate-400 uppercase">남은 퀘스트</span>
+                            <span class="text-2xl font-bold text-amber-400" id="remainingCount">160</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recommendation Card -->
+                <div class="w-full md:w-80 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 relative group hover:bg-white/15 transition-all cursor-pointer" onclick="openNextMission()">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">🔥 추천 글감</span>
+                        <button onclick="sendToTelegram(event)" class="text-white hover:text-sky-400 transition-colors" title="텔레그램 전송"><i class="fa-brands fa-telegram text-xl"></i></button>
+                    </div>
+                    <h3 id="nextMissionTitle" class="text-base font-bold text-white mb-1 leading-snug line-clamp-2">로딩중...</h3>
+                    <p id="nextMissionHook" class="text-xs text-slate-300 line-clamp-1 italic">"데이터를 불러오는 중입니다..."</p>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex justify-between items-center">
+                        <span id="nextMissionLeg" class="text-xs font-medium text-indigo-200 bg-indigo-900/50 px-2 py-1 rounded">-</span>
+                        <span class="text-xs text-amber-300 font-bold hover:underline">작성하러 가기 &rarr;</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phases Grid -->
+            <div class="grid grid-cols-1 gap-8 relative pb-20">
+                <div class="hidden md:block absolute left-8 top-8 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 via-slate-300 to-slate-100"></div>
+                <!-- Phase 1 -->
+                <div class="roadmap-section relative pl-0 md:pl-20">
+                    <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-indigo-500 rounded-full items-center justify-center z-10 shadow-md">
+                        <span class="text-xl font-bold text-indigo-700">1</span>
+                    </div>
+                    <div class="mb-4"><h3 class="text-xl font-bold text-slate-800">Lv.1 기초 다지기 <span class="text-sm font-normal text-slate-500 ml-2">검색 유입의 씨앗 (글 1~40)</span></h3></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="phase1-grid"></div>
+                </div>
+                <!-- Phase 2 -->
+                <div class="roadmap-section relative pl-0 md:pl-20">
+                    <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-emerald-500 rounded-full items-center justify-center z-10 shadow-md">
+                        <span class="text-xl font-bold text-emerald-700">2</span>
+                    </div>
+                    <div class="mb-4"><h3 class="text-xl font-bold text-slate-800">Lv.2 트래픽 폭발 <span class="text-sm font-normal text-slate-500 ml-2">이슈성 키워드 공략 (글 41~80)</span></h3></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="phase2-grid"></div>
+                </div>
+                <!-- Phase 3 -->
+                <div class="roadmap-section relative pl-0 md:pl-20">
+                    <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-amber-500 rounded-full items-center justify-center z-10 shadow-md">
+                        <span class="text-xl font-bold text-amber-700">3</span>
+                    </div>
+                    <div class="mb-4"><h3 class="text-xl font-bold text-slate-800">Lv.3 신뢰 구축 <span class="text-sm font-normal text-slate-500 ml-2">전문가 포지셔닝 (글 81~120)</span></h3></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="phase3-grid"></div>
+                </div>
+                <!-- Phase 4 -->
+                <div class="roadmap-section relative pl-0 md:pl-20">
+                    <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-rose-500 rounded-full items-center justify-center z-10 shadow-md">
+                        <span class="text-xl font-bold text-rose-700">4</span>
+                    </div>
+                    <div class="mb-4"><h3 class="text-xl font-bold text-slate-800">Lv.4 수익 사냥 <span class="text-sm font-normal text-slate-500 ml-2">CPA 극대화 (글 121~160)</span></h3></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="phase4-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: LIBRARY -->
+        <div id="library-view" class="hidden space-y-6 animate-fade-in">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 card-shadow sticky top-20 z-40">
+                <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto">
+                        <button class="filter-btn active bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold shrink-0" data-filter="all">전체</button>
+                        <button class="filter-btn bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-medium hover:bg-amber-50 shrink-0" data-filter="Traffic">교통</button>
+                        <button class="filter-btn bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-medium hover:bg-indigo-50 shrink-0" data-filter="Debt">빚</button>
+                        <button class="filter-btn bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-medium hover:bg-emerald-50 shrink-0" data-filter="Housing">주거</button>
+                        <button class="filter-btn bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-medium hover:bg-rose-50 shrink-0" data-filter="Crime">범죄</button>
+                    </div>
+                    <div class="relative w-full md:w-96">
+                        <input type="text" id="searchInput" placeholder="키워드 검색..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
+                        <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="fullLibraryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pb-20">
+                <!-- JS Populated -->
+            </div>
+        </div>
+
+        <!-- VIEW 4: SETTINGS -->
+        <div id="settings-view" class="hidden space-y-8 animate-fade-in max-w-2xl mx-auto mt-10">
+            <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200 text-center">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-sliders text-2xl text-slate-500"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">설정 및 데이터 관리</h2>
+                <p class="text-slate-500 mb-8 text-sm">작업 내역 백업 또는 초기화를 수행할 수 있습니다.</p>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="exportData()" class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 transition-all group">
+                            <i class="fa-solid fa-download text-xl text-indigo-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-slate-700 text-sm">백업 파일 저장</span>
+                        </button>
+                        <button onclick="document.getElementById('importFile').click()" class="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 transition-all group">
+                            <i class="fa-solid fa-upload text-xl text-emerald-500 mb-2 group-hover:scale-110 transition-transform"></i>
+                            <span class="font-bold text-slate-700 text-sm">백업 파일 복원</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Clear Cache Button -->
+                    <button onclick="resetData()" class="flex items-center justify-center p-4 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 hover:border-rose-400 transition-all group mt-4">
+                        <i class="fa-solid fa-trash-can text-lg text-rose-500 mr-2 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-left">
+                            <span class="font-bold text-rose-700 block text-sm">캐시 삭제 (데이터 초기화)</span>
+                            <span class="text-xs text-rose-500">브라우저에 저장된 모든 발행 기록을 삭제합니다.</span>
+                        </div>
+                    </button>
+                </div>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(this)">
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-slate-900/80 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300 flex flex-col" id="modalContent">
+            <div class="relative bg-slate-800 p-6 shrink-0">
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors text-xl"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex items-center gap-2 mb-3">
+                    <span id="m-leg" class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-700 text-white">CATEGORY</span>
+                    <span id="m-phase" class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-indigo-500 text-white">LV.1 BASE</span>
+                </div>
+                <h2 id="m-title" class="text-lg md:text-xl font-bold text-white leading-snug mb-4">Title Placeholder</h2>
+                <div class="flex items-center gap-2 bg-slate-900/50 p-2 rounded-lg border border-slate-600">
+                    <div class="flex-1 min-w-0">
+                        <div id="m-copy-text" class="text-amber-300 font-mono text-xs md:text-sm truncate">Title /// Keyword</div>
+                    </div>
+                    <button onclick="copyToClipboard('m-copy-text')" class="bg-amber-500 hover:bg-amber-400 text-indigo-900 text-xs font-bold px-3 py-2 rounded transition-colors whitespace-nowrap">복사</button>
+                </div>
+            </div>
+            <div class="p-6 space-y-6 overflow-y-auto">
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+                    <div><h4 class="text-sm font-bold text-slate-700">발행 완료 체크</h4><p class="text-xs text-slate-500">체크 시 경험치와 머니 파워가 상승합니다.</p></div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="m-published-check" class="sr-only peer" onchange="togglePublishStatus()">
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+                <!-- URL & Affiliate Input -->
+                <div id="m-url-section" class="hidden space-y-3 animate-fade-in bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">발행 URL (내 블로그)</label>
+                        <input type="text" id="m-url-input" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm outline-none" onchange="savePostDetails()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-600 mb-1">수익 제휴 링크 (CPA/CPS)</label>
+                        <input type="text" id="m-affiliate-input" class="w-full bg-white border border-emerald-300 rounded-lg p-2 text-sm outline-none" onchange="savePostDetails()">
+                    </div>
+                </div>
+
+                <!-- Internal Link Library (per-post) -->
+                <div class="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <h4 class="text-slate-800 text-sm font-bold">내부링크(URL) 저장</h4>
+                            <p class="text-xs text-slate-500">발행 URL을 입력해두면, 나중에 글 문맥에 자연스럽게 넣을 내부링크 문장을 자동으로 뽑아낼 수 있습니다.</p>
+                        </div>
+                        <button onclick="openLinkLibrary()" class="text-xs font-bold px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 transition-colors whitespace-nowrap">
+                            라이브러리 열기
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">내부링크 URL</label>
+                            <input type="text" id="m-il-url" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm outline-none" placeholder="https://내블로그주소/..." />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">앵커(짧은 제목)</label>
+                            <input type="text" id="m-il-anchor" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm outline-none" placeholder="예: 개인회생 준비서류" />
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="addInternalLinkToPost()" class="text-xs font-bold px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors">이 글에 연결</button>
+                        <button onclick="copyInternalLinkSnippets()" class="text-xs font-bold px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors">문맥용 문장 3개 복사</button>
+                        <button onclick="copyInternalLinksHtml()" class="text-xs font-bold px-3 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors">HTML 내부링크 블록 복사</button>
+                    </div>
+                    <div id="m-internal-links" class="text-xs text-slate-600 space-y-2"></div>
+                    <textarea id="m-il-snippets" class="hidden"></textarea>
+                    <textarea id="m-il-html" class="hidden"></textarea>
+                </div>
+
+                <!-- Prompt Patch: CTA 유형 B + FAQ Q1~Q5 고정 -->
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-3">
+                    <div>
+                        <h4 class="text-amber-900 text-sm font-bold">프롬프트 패치(복사해서 GEM에 붙여넣기)</h4>
+                        <p class="text-xs text-amber-800">CTA 버튼이 밋밋해지는 문제와 FAQ 표기 흔들림을 막기 위한 “강제 삽입 규칙”입니다.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-bold text-amber-900">A) CTA 유형 B 템플릿(구조 고정)</p>
+                            <button onclick="copyValue('patchCtaTemplate')" class="text-xs font-bold px-3 py-2 rounded-lg bg-amber-600 text-white hover:bg-amber-500 transition-colors">복사</button>
+                        </div>
+                        <textarea id="patchCtaTemplate" class="w-full bg-white border border-amber-200 rounded-lg p-3 text-xs font-mono leading-relaxed" rows="10" spellcheck="false">&lt;br&gt;
+&lt;div style="margin: 40px 0; padding: 26px 18px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 18px; box-shadow: 0 10px 26px rgba(249,115,22,0.12); text-align: center;"&gt;
+  &lt;p style="margin: 0 0 14px 0; font-size: 15px; color: #9a3412; font-weight: 800; letter-spacing: -0.2px;"&gt;
+    ✔ 지금 바로 무료 크레딧 받고 시작하세요
+  &lt;/p&gt;
+
+  &lt;a href="https://seedance2.ai/ko" target="_self"
+     style="display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%; max-width:620px; box-sizing:border-box;
+            background:linear-gradient(135deg,#FF6900,#F59E0B);
+            color:#ffffff; padding:18px 20px; text-decoration:none; border-radius:999px;
+            font-weight:900; font-size:18px; letter-spacing:-0.2px;
+            box-shadow:0 14px 30px rgba(255,105,0,0.25);
+            border:1px solid rgba(255,255,255,0.35);"&gt;
+    &lt;span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:999px;
+                 background:rgba(255,255,255,0.22);
+                 border:1px solid rgba(255,255,255,0.35);
+                 box-shadow:inset 0 0 0 1px rgba(255,255,255,0.15);
+                 font-size:18px; line-height:1; flex-shrink:0;"&gt;
+      🚀
+    &lt;/span&gt;
+    &lt;span style="line-height:1.2; flex: 1;"&gt;Seedance 2.0 무료 체험하기&lt;/span&gt;
+    &lt;span style="display:inline-block; margin-left:6px; font-size:20px; line-height:1; opacity:0.95; flex-shrink:0;"&gt;→&lt;/span&gt;
+  &lt;/a&gt;
+
+  &lt;p style="margin: 10px 0 0 0; font-size: 13px; color: #9a3412; line-height: 1.7;"&gt;
+    신규 가입 시 20 크레딧 즉시 지급!
+  &lt;/p&gt;
+&lt;/div&gt;
+&lt;br&gt;</textarea>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-bold text-amber-900">B) FAQ Q1~Q5 표기 강제 + 자체검수</p>
+                            <button onclick="copyValue('patchFaqRule')" class="text-xs font-bold px-3 py-2 rounded-lg bg-amber-600 text-white hover:bg-amber-500 transition-colors">복사</button>
+                        </div>
+                        <textarea id="patchFaqRule" class="w-full bg-white border border-amber-200 rounded-lg p-3 text-xs font-mono leading-relaxed" rows="9" spellcheck="false">[FAQ 출력 규칙]
+- FAQ는 반드시 5개 고정
+- 표기는 무조건 아래 형식만 허용:
+  Q1. ...
+  A1. ...
+  Q2. ...
+  A2. ...
+  ...
+  Q5. ...
+  A5. ...
+
+[FAQ 금지 규칙]
+- "Q." "A." 표기 금지
+- FAQ 섹션 안에 &lt;h3&gt; 사용 금지
+
+[자체검수(출력 직전 확인)]
+- Q1~Q5 / A1~A5가 모두 존재하는가?
+- 총 5쌍(10줄)인가?
+- "Q." "A." 문자열이 0개인가?</textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><h4 class="text-xs font-bold text-slate-400 uppercase mb-1">Keyword</h4><p id="m-keyword" class="text-base font-bold text-slate-800">-</p></div>
+                    <div><h4 class="text-xs font-bold text-slate-400 uppercase mb-1">Hook</h4><p id="m-hook" class="text-sm text-slate-600 italic border-l-2 border-amber-400 pl-3">-</p></div>
+                </div>
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                    <h4 class="text-indigo-700 text-sm font-bold mb-2">공략 포인트</h4><p id="m-body" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">-</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="top-actions">
-      <button class="btn good" id="btnToday">오늘로 이동</button>
-      <button class="btn" id="btnExport">백업(JSON)</button>
-      <label class="btn" for="importFile" style="cursor:pointer">복원(JSON)</label>
-      <input id="importFile" type="file" accept="application/json" style="display:none" />
-      <button class="btn" id="btnReset">초기화</button>
-      <button class="btn primary" id="btnAutoFill">90일 키워드/유형 자동배치</button>
-    </div>
-  </header>
-
-  <main>
-    <!-- LEFT -->
-    <section class="panel">
-      <div class="hd">
-        <h2>오늘의 퀘스트 & 선택한 Day 편집</h2>
-        <span class="pill" id="dayLabel">Day 1</span>
-      </div>
-      <div class="bd">
-
-        <div class="grid2">
-          <div class="card">
-            <div class="metric">
-              <div>
-                <div class="k">진행률</div>
-                <div class="tiny">완료한 Day / 90</div>
-              </div>
-              <div class="v" id="progressPct">0%</div>
-            </div>
-            <div class="sep"></div>
-            <div class="tiny">완료: <b id="doneCount">0</b> / 90</div>
-          </div>
-
-          <div class="card">
-            <div class="metric">
-              <div>
-                <div class="k">전환 체크</div>
-                <div class="tiny">CTA 클릭/문의(수기)</div>
-              </div>
-              <div class="v" id="leadCount">0</div>
-            </div>
-            <div class="sep"></div>
-            <div class="tiny">※ 수기 기록 기준</div>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="row" style="justify-content:space-between; align-items:flex-start">
-          <div style="flex:1; min-width:220px">
-            <label>90일 시작일</label>
-            <input type="text" id="startDate" placeholder="예) 2026-02-16" />
-            <div class="tiny">비워두면 “오늘”이 Day 1</div>
-          </div>
-          <div style="flex:1; min-width:220px">
-            <label>현재 선택 Day</label>
-            <select id="daySelect"></select>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="grid2">
-          <div>
-            <label>글 유형(템플릿)</label>
-            <select id="postType">
-              <option value="전환형-비교결단">전환형-비교결단</option>
-              <option value="전환형-실패경고">전환형-실패경고</option>
-              <option value="전환형-위기대응">전환형-위기대응</option>
-              <option value="신뢰형-승인사례">신뢰형-승인사례</option>
-              <option value="SEO형-기본정보">SEO형-기본정보</option>
-            </select>
-          </div>
-          <div>
-            <label>키워드 의도</label>
-            <select id="intent">
-              <option value="고의도">고의도</option>
-              <option value="중의도">중의도</option>
-              <option value="저의도">저의도</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <label>SEO 제목 /// 메인키워드</label>
-        <input type="text" id="titleKeyword" placeholder="예) 개인회생 변호사 비용 비교///개인회생 변호사 비용" />
-
-        <div class="sep"></div>
-
-        <div class="grid2">
-          <div>
-            <label>작성/발행 URL (선택)</label>
-            <input type="text" id="url" placeholder="https://..." />
-          </div>
-          <div>
-            <label>성과 메모 (수기)</label>
-            <input type="text" id="resultMemo" placeholder="예) CTA 클릭 2, 문의 1" />
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="warnbox">
-          <b>고정 규칙(프롬프트에도 반영됨)</b><br>
-          ① H2 7개 고정 ② H2#1~#6 하위 H3 최소 1개 ③ H2#7 하위 H3 금지<br>
-          ④ FAQ는 Q1~Q5 “5개 고정” ⑤ CTA 3개 분산( H2#2 / H2#4 / FAQ 2개 이후 )
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="grid2">
-          <div class="card">
-            <div class="metric">
-              <div>
-                <div class="k">CTA 클릭(수기)</div>
-                <div class="tiny">오늘 기록</div>
-              </div>
-              <div class="v" id="ctaClicksVal">0</div>
-            </div>
-            <div class="sep"></div>
-            <label class="tiny">오늘 CTA 클릭 수</label>
-            <input type="number" id="ctaClicks" min="0" step="1" />
-          </div>
-
-          <div class="card">
-            <div class="metric">
-              <div>
-                <div class="k">문의/리드(수기)</div>
-                <div class="tiny">폼/카톡/전화</div>
-              </div>
-              <div class="v" id="leadsVal">0</div>
-            </div>
-            <div class="sep"></div>
-            <label class="tiny">오늘 문의(리드) 수</label>
-            <input type="number" id="leads" min="0" step="1" />
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="grid2">
-          <button class="btn good" id="btnMarkDone">✅ 오늘 Day 완료 처리</button>
-          <button class="btn" id="btnUnDone">↩️ 완료 취소</button>
-        </div>
-
-        <div class="sep"></div>
-
-        <label>체크리스트</label>
-        <div class="checklist" id="checklist"></div>
-
-        <div class="sep"></div>
-
-        <label>메모(자유)</label>
-        <textarea id="notes" placeholder="예) CTA 문구가 약했음 / 다음 글에서 '기각' 키워드 강화 / 내부링크 구조 수정"></textarea>
-
-        <div style="height:10px"></div>
-        <button class="btn" id="btnSave">저장</button>
-
-        <div class="sep"></div>
-
-        <!-- NEW: Prompt Generator -->
-        <div class="promptBox">
-          <div class="row" style="justify-content:space-between; align-items:center">
-            <div style="font-weight:900">프롬프트 자동 생성</div>
-            <div class="promptActions">
-              <button class="btn good" id="btnMakePrompt">프롬프트 생성</button>
-              <button class="btn" id="btnCopyPrompt">복사</button>
-            </div>
-          </div>
-          <div class="tiny" style="margin-top:6px">
-            선택한 Day의 <span class="mono">제목///키워드</span>·유형·의도 값을 반영해 “개인회생 글 생성 프롬프트”를 만든다.
-          </div>
-          <textarea class="promptText" id="promptText" spellcheck="false" placeholder="여기에 프롬프트가 생성됩니다."></textarea>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- RIGHT -->
-    <section class="panel">
-      <div class="hd">
-        <h2>90일 캘린더 & 필터</h2>
-        <div class="chips">
-          <div class="chip" data-filter="all" data-active="true"><span class="dot info"></span>전체</div>
-          <div class="chip" data-filter="done"><span class="dot good"></span>완료</div>
-          <div class="chip" data-filter="todo"><span class="dot warn"></span>미완료</div>
-          <div class="chip" data-filter="leads"><span class="dot bad"></span>리드 발생</div>
-        </div>
-      </div>
-
-      <div class="bd">
-        <div class="grid3">
-          <div class="card">
-            <div class="metric">
-              <div>
-                <div class="k">이번 주 목표</div>
-                <div class="tiny">주 14포 기준</div>
-              </div>
-              <div class="v" id="weekTarget">14</div>
-            </div>
-            <div class="sep"></div>
-            <div class="tiny">3포/일이면 목표 초과 가능</div>
-          </div>
-
-          <div class="card">
-            <div class="metric">
-              <div>
-                <div class="k">전환형 비중</div>
-                <div class="tiny">전환형 3종 합계</div>
-              </div>
-              <div class="v" id="convRatio">0%</div>
-            </div>
-            <div class="sep"></div>
-            <div class="tiny">권장: <b>60%+</b> (초기 30일)</div>
-          </div>
-
-          <div class="card">
-            <div class="metric">
-              <div>
-                <div class="k">내부링크 규율</div>
-                <div class="tiny">link5 체크 Day</div>
-              </div>
-              <div class="v" id="linkDiscipline">0</div>
-            </div>
-            <div class="sep"></div>
-            <div class="tiny">권장: 90일 중 <b>70일+</b></div>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="row" style="justify-content:space-between">
-          <div style="flex:1; min-width:220px">
-            <label>빠른 검색</label>
-            <input type="text" id="search" placeholder="키워드/제목 일부 검색" />
-          </div>
-          <div style="flex:1; min-width:220px">
-            <label>유형 필터</label>
-            <select id="typeFilter">
-              <option value="all">전체</option>
-              <option value="전환형-비교결단">전환형-비교결단</option>
-              <option value="전환형-실패경고">전환형-실패경고</option>
-              <option value="전환형-위기대응">전환형-위기대응</option>
-              <option value="신뢰형-승인사례">신뢰형-승인사례</option>
-              <option value="SEO형-기본정보">SEO형-기본정보</option>
-            </select>
-          </div>
-          <div style="flex:1; min-width:220px">
-            <label>의도 필터</label>
-            <select id="intentFilter">
-              <option value="all">전체</option>
-              <option value="고의도">고의도</option>
-              <option value="중의도">중의도</option>
-              <option value="저의도">저의도</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="height:12px"></div>
-        <div class="calendar" id="calendar"></div>
-
-        <div class="sep"></div>
-
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
-            <div>
-              <div style="font-weight:900;font-size:13px;margin-bottom:6px">운영 원칙</div>
-              <div class="hint">
-                ① 고의도/전환형 먼저 ② FAQ 5개(Q1~Q5) 고정 ③ CTA 분산 3개 ④ 과장/단정 금지
-              </div>
-            </div>
-            <div class="chips">
-              <span class="chip" style="cursor:default"><span class="dot good"></span>완료</span>
-              <span class="chip" style="cursor:default"><span class="dot warn"></span>미완료</span>
-              <span class="chip" style="cursor:default"><span class="dot bad"></span>리드</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <div class="footer-note">
-    ⚠️ 본 대시보드는 운영 도구입니다. 법률 자문이 아닙니다. 데이터는 이 브라우저에 저장됩니다.
-  </div>
-
-<script>
-(() => {
-  const STORAGE_KEY = "lawgear_pacemaker_rehab_90d_v2_prompt";
-
-  const defaultChecklist = [
-    { key:"cta3", title:"CTA 3개 삽입", desc:"H2#2 / H2#4 / FAQ 2개 이후 (CTA 뒤 p 1개)" },
-    { key:"faq5", title:"FAQ 5개 고정", desc:"Q1~Q5 형식 고정, 질문/답변 개수 변경 금지" },
-    { key:"link5", title:"내부링크 5개", desc:"허브글(변호사비용/승인확률)로 2개 이상 연결" },
-    { key:"noHype", title:"과장/단정 금지", desc:"100%/무조건/확정 표현 금지, 케이스별 다름 명시" },
-    { key:"proof", title:"근거/절차 명시", desc:"법원/절차/서류 흐름이 보이게 작성" },
-  ];
-
-  const conversionTypes = new Set(["전환형-비교결단","전환형-실패경고","전환형-위기대응"]);
-
-  const seedTitles = [
-    "개인회생 변호사 비용 비교///개인회생 변호사 비용",
-    "개인회생 수임료 평균과 추가비용 함정///개인회생 수임료",
-    "개인회생 승인확률 올리는 핵심 5가지///개인회생 승인확률",
-    "개인회생 무료상담 전에 꼭 확인할 3가지///개인회생 무료상담",
-    "개인회생 법무사 vs 변호사 뭐가 유리할까///개인회생 법무사 변호사",
-    "개인회생 기각 사유 TOP7과 피하는 방법///개인회생 기각 사유",
-    "개인회생 금지명령 기각되는 케이스///개인회생 금지명령 기각",
-    "개인회생 재신청 가능 조건과 타이밍///개인회생 재신청",
-    "개인회생 폐지되면 어떻게 되나 재진입 전략///개인회생 폐지",
-    "개인회생 변제금 줄이는 방법 현실 정리///개인회생 변제금 줄이기",
-    "개인회생 성공률이 갈리는 서류 포인트///개인회생 성공률",
-    "개인회생 기각 후 재도전 로드맵///개인회생 기각 후",
-    "개인회생 통장압류 풀리는 시점과 대응///개인회생 통장압류",
-    "개인회생 채권자 이의신청 들어오면///개인회생 이의신청",
-    "개인회생 보정권고 대응 못 하면 생기는 일///개인회생 보정권고",
-    "개인회생 서류 준비 체크리스트///개인회생 준비서류",
-    "개인회생 신청자격 조건 한 번에 정리///개인회생 신청자격",
-    "개인회생 절차 기간 단계별 일정///개인회생 절차",
-    "개인회생 금지명령 신청 방법///개인회생 금지명령",
-    "개인회생 보정명령 자주 나오는 이유///개인회생 보정명령",
-    "개인회생 변제계획안 작성 핵심///개인회생 변제계획안",
-    "개인회생 채무한도와 포함되는 채무///개인회생 채무한도",
-    "개인회생 면책 결정까지 걸리는 시간///개인회생 면책 기간",
-    "개인회생 중 자동차 유지 가능할까///개인회생 자동차",
-    "개인회생 중 대출 가능 여부///개인회생 대출",
-    "개인회생 중 카드 사용 가능할까///개인회생 신용카드",
-    "개인회생 소득 증빙 서류는 뭐가 필요///개인회생 소득증빙",
-    "개인회생 배우자 재산 영향 범위///개인회생 배우자 재산",
-    "개인회생 주거(전월세) 영향과 주의점///개인회생 전월세",
-    "개인회생 이후 신용회복 기간 정리///개인회생 신용회복",
-  ];
-
-  const state = loadState();
-
-  const el = {
-    startDate: document.getElementById("startDate"),
-    daySelect: document.getElementById("daySelect"),
-    dayLabel: document.getElementById("dayLabel"),
-    titleKeyword: document.getElementById("titleKeyword"),
-    url: document.getElementById("url"),
-    resultMemo: document.getElementById("resultMemo"),
-    postType: document.getElementById("postType"),
-    intent: document.getElementById("intent"),
-    notes: document.getElementById("notes"),
-    checklist: document.getElementById("checklist"),
-    btnSave: document.getElementById("btnSave"),
-    btnMarkDone: document.getElementById("btnMarkDone"),
-    btnUnDone: document.getElementById("btnUnDone"),
-    btnToday: document.getElementById("btnToday"),
-    btnExport: document.getElementById("btnExport"),
-    importFile: document.getElementById("importFile"),
-    btnReset: document.getElementById("btnReset"),
-    btnAutoFill: document.getElementById("btnAutoFill"),
-    calendar: document.getElementById("calendar"),
-    chips: Array.from(document.querySelectorAll(".chip[data-filter]")),
-    search: document.getElementById("search"),
-    typeFilter: document.getElementById("typeFilter"),
-    intentFilter: document.getElementById("intentFilter"),
-    progressPct: document.getElementById("progressPct"),
-    doneCount: document.getElementById("doneCount"),
-    leadCount: document.getElementById("leadCount"),
-    ctaClicks: document.getElementById("ctaClicks"),
-    leads: document.getElementById("leads"),
-    ctaClicksVal: document.getElementById("ctaClicksVal"),
-    leadsVal: document.getElementById("leadsVal"),
-    weekTarget: document.getElementById("weekTarget"),
-    convRatio: document.getElementById("convRatio"),
-    linkDiscipline: document.getElementById("linkDiscipline"),
-    // NEW
-    btnMakePrompt: document.getElementById("btnMakePrompt"),
-    btnCopyPrompt: document.getElementById("btnCopyPrompt"),
-    promptText: document.getElementById("promptText"),
-  };
-
-  initStartDate();
-  initDaySelect();
-  bindEvents();
-  renderAll();
-
-  function initStartDate(){
-    if(!state.startDate){
-      state.startDate = formatDate(new Date());
-      saveState();
-    }
-    el.startDate.value = state.startDate;
-  }
-
-  function initDaySelect(){
-    el.daySelect.innerHTML = "";
-    for(let i=1;i<=90;i++){
-      const opt = document.createElement("option");
-      opt.value = String(i);
-      opt.textContent = `Day ${i}`;
-      el.daySelect.appendChild(opt);
-    }
-    el.daySelect.value = String(state.selectedDay || 1);
-  }
-
-  function bindEvents(){
-    el.daySelect.addEventListener("change", () => {
-      state.selectedDay = Number(el.daySelect.value);
-      saveState();
-      renderAll();
-    });
-
-    el.startDate.addEventListener("change", () => {
-      state.startDate = el.startDate.value.trim() || formatDate(new Date());
-      saveState();
-      renderCalendar();
-    });
-
-    el.btnSave.addEventListener("click", () => {
-      applyEditorToDay();
-      saveState();
-      renderAll();
-    });
-
-    el.btnMarkDone.addEventListener("click", () => {
-      applyEditorToDay();
-      const d = getDay(state.selectedDay);
-      d.done = true;
-      saveState();
-      renderAll();
-    });
-
-    el.btnUnDone.addEventListener("click", () => {
-      const d = getDay(state.selectedDay);
-      d.done = false;
-      saveState();
-      renderAll();
-    });
-
-    el.btnToday.addEventListener("click", () => {
-      const dayNum = computeDayFromStart(state.startDate, new Date());
-      state.selectedDay = clamp(dayNum,1,90);
-      el.daySelect.value = String(state.selectedDay);
-      saveState();
-      renderAll();
-    });
-
-    el.btnExport.addEventListener("click", () => exportJSON());
-
-    el.importFile.addEventListener("change", async (e) => {
-      const file = e.target.files?.[0];
-      if(!file) return;
-      const text = await file.text();
-      try{
-        const data = JSON.parse(text);
-        if(!data || !data.days || !Array.isArray(data.days)) throw new Error("형식 오류");
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        location.reload();
-      }catch(err){
-        alert("복원 실패: JSON 형식이 올바르지 않습니다.");
-      }finally{
-        el.importFile.value = "";
-      }
-    });
-
-    el.btnReset.addEventListener("click", () => {
-      if(!confirm("정말 초기화할까요? (저장된 90일 데이터가 삭제됩니다)")) return;
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    });
-
-    el.btnAutoFill.addEventListener("click", () => {
-      if(!confirm("90일 키워드/유형 자동 배치를 적용할까요? (이미 입력된 Day는 유지됩니다)")) return;
-      autoFill90Days();
-      saveState();
-      renderAll();
-    });
-
-    el.chips.forEach(ch => ch.addEventListener("click", () => {
-      el.chips.forEach(x => x.dataset.active = "false");
-      ch.dataset.active = "true";
-      state.filter = ch.dataset.filter;
-      saveState();
-      renderCalendar();
-    }));
-
-    el.search.addEventListener("input", () => { state.search = el.search.value; saveState(); renderCalendar(); });
-    el.typeFilter.addEventListener("change", () => { state.typeFilter = el.typeFilter.value; saveState(); renderCalendar(); });
-    el.intentFilter.addEventListener("change", () => { state.intentFilter = el.intentFilter.value; saveState(); renderCalendar(); });
-
-    // NEW: prompt
-    el.btnMakePrompt.addEventListener("click", () => {
-      applyEditorToDay();
-      const d = getDay(state.selectedDay);
-      el.promptText.value = buildPrompt(d, state.selectedDay);
-      saveState();
-      renderStats();
-      renderCalendar();
-    });
-
-    el.btnCopyPrompt.addEventListener("click", async () => {
-      const text = el.promptText.value || "";
-      if(!text.trim()) return alert("복사할 프롬프트가 없습니다. 먼저 생성하세요.");
-      try{
-        await navigator.clipboard.writeText(text);
-        alert("프롬프트를 복사했습니다.");
-      }catch(e){
-        el.promptText.select();
-        document.execCommand("copy");
-        alert("프롬프트를 복사했습니다.");
-      }
-    });
-  }
-
-  function renderAll(){
-    renderStats();
-    renderEditor();
-    renderCalendar();
-    el.search.value = state.search || "";
-    el.typeFilter.value = state.typeFilter || "all";
-    el.intentFilter.value = state.intentFilter || "all";
-    const f = state.filter || "all";
-    el.chips.forEach(x => x.dataset.active = (x.dataset.filter===f) ? "true" : "false");
-  }
-
-  function renderStats(){
-    const done = state.days.filter(d => d.done).length;
-    const pct = Math.round((done/90)*100);
-    const leadsSum = state.days.reduce((a,d)=>a+(Number(d.leads)||0),0);
-
-    el.doneCount.textContent = String(done);
-    el.progressPct.textContent = `${pct}%`;
-    el.leadCount.textContent = String(leadsSum);
-
-    const convCount = state.days.filter(d => conversionTypes.has(d.postType)).length;
-    const convPct = Math.round((convCount/90)*100);
-    el.convRatio.textContent = `${convPct}%`;
-
-    const linkDays = state.days.filter(d => d.checks?.link5 === true).length;
-    el.linkDiscipline.textContent = String(linkDays);
-
-    el.weekTarget.textContent = "14";
-
-    const cur = getDay(state.selectedDay);
-    el.ctaClicksVal.textContent = String(cur.ctaClicks||0);
-    el.leadsVal.textContent = String(cur.leads||0);
-  }
-
-  function renderEditor(){
-    const d = getDay(state.selectedDay);
-    el.dayLabel.textContent = `Day ${state.selectedDay}`;
-    el.titleKeyword.value = d.titleKeyword || "";
-    el.url.value = d.url || "";
-    el.resultMemo.value = d.resultMemo || "";
-    el.postType.value = d.postType || "전환형-비교결단";
-    el.intent.value = d.intent || "고의도";
-    el.notes.value = d.notes || "";
-    el.ctaClicks.value = d.ctaClicks ?? 0;
-    el.leads.value = d.leads ?? 0;
-
-    el.checklist.innerHTML = "";
-    const checks = d.checks || {};
-    defaultChecklist.forEach(item => {
-      const wrap = document.createElement("div");
-      wrap.className = "check";
-      const box = document.createElement("input");
-      box.type = "checkbox";
-      box.checked = !!checks[item.key];
-      box.addEventListener("change", () => {
-        checks[item.key] = box.checked;
-        d.checks = checks;
-        saveState();
-        renderStats();
-        renderCalendar();
-      });
-
-      const txt = document.createElement("div");
-      txt.style.flex = "1";
-      const t = document.createElement("div");
-      t.className="t";
-      t.textContent = item.title;
-      const desc = document.createElement("div");
-      desc.className="d";
-      desc.textContent = item.desc;
-      txt.appendChild(t); txt.appendChild(desc);
-
-      wrap.appendChild(box);
-      wrap.appendChild(txt);
-      el.checklist.appendChild(wrap);
-    });
-  }
-
-  function applyEditorToDay(){
-    const d = getDay(state.selectedDay);
-    d.titleKeyword = el.titleKeyword.value.trim();
-    d.url = el.url.value.trim();
-    d.resultMemo = el.resultMemo.value.trim();
-    d.postType = el.postType.value;
-    d.intent = el.intent.value;
-    d.notes = el.notes.value.trim();
-    d.ctaClicks = Number(el.ctaClicks.value || 0);
-    d.leads = Number(el.leads.value || 0);
-  }
-
-  function renderCalendar(){
-    el.calendar.innerHTML = "";
-    const start = parseDate(state.startDate);
-
-    const filter = state.filter || "all";
-    const q = (state.search || "").toLowerCase().trim();
-    const tf = state.typeFilter || "all";
-    const inf = state.intentFilter || "all";
-
-    for(let i=1;i<=90;i++){
-      const d = getDay(i);
-
-      if(filter === "done" && !d.done) continue;
-      if(filter === "todo" && d.done) continue;
-      if(filter === "leads" && !(Number(d.leads)||0)) continue;
-
-      if(tf !== "all" && d.postType !== tf) continue;
-      if(inf !== "all" && d.intent !== inf) continue;
-
-      if(q){
-        const hay = `${d.titleKeyword||""} ${d.postType||""} ${d.intent||""}`.toLowerCase();
-        if(!hay.includes(q)) continue;
-      }
-
-      const date = addDays(start, i-1);
-      const box = document.createElement("div");
-      box.className = "day" + (i === state.selectedDay ? " selected" : "");
-      box.addEventListener("click", () => {
-        state.selectedDay = i;
-        el.daySelect.value = String(i);
-        saveState();
-        renderAll();
-      });
-
-      const top = document.createElement("div");
-      top.className="num";
-      const left = document.createElement("span");
-      left.textContent = `D${String(i).padStart(2,"0")} · ${formatMMDD(date)}`;
-      const badge = document.createElement("span");
-
-      const hasLeads = (Number(d.leads)||0) > 0;
-      if(hasLeads){
-        badge.className="badge bad";
-        badge.textContent = `리드 ${d.leads}`;
-      }else if(d.done){
-        badge.className="badge good";
-        badge.textContent = "완료";
-      }else{
-        badge.className="badge warn";
-        badge.textContent = "대기";
-      }
-
-      top.appendChild(left);
-      top.appendChild(badge);
-
-      const mini = document.createElement("div");
-      mini.className="mini";
-      if(d.intent) mini.appendChild(tag(d.intent));
-      if(d.postType) mini.appendChild(tag(shortType(d.postType)));
-      if(d.titleKeyword){
-        const kw = d.titleKeyword.split("///")[1] ? d.titleKeyword.split("///")[1].trim() : d.titleKeyword.trim();
-        if(kw) mini.appendChild(tag(clip(kw, 10)));
-      }
-
-      box.appendChild(top);
-      box.appendChild(mini);
-      el.calendar.appendChild(box);
-    }
-  }
-
-  function tag(text){ const s = document.createElement("span"); s.textContent = text; return s; }
-  function clip(s,n){ return s.length>n ? s.slice(0,n)+"…" : s; }
-  function shortType(t){
-    if(t.startsWith("전환형-")) return t.replace("전환형-","전환/");
-    if(t.startsWith("신뢰형-")) return t.replace("신뢰형-","신뢰/");
-    if(t.startsWith("SEO형-")) return t.replace("SEO형-","SEO/");
-    return t;
-  }
-
-  function autoFill90Days(){
-    for(let i=1;i<=90;i++){
-      const d = getDay(i);
-      if(d.titleKeyword && d.titleKeyword.trim()) continue;
-
-      if(i<=seedTitles.length){
-        d.titleKeyword = seedTitles[i-1];
-      }else{
-        const idx = i - seedTitles.length;
-        const pack = generateKeywordPack(idx);
-        d.titleKeyword = `${pack.title}///${pack.keyword}`;
-      }
-
-      const r = (i<=45) ? i % 10 : i % 12;
-      if(i<=45){
-        if(r<=5){ d.intent="고의도"; d.postType = (r%2===0) ? "전환형-실패경고" : "전환형-비교결단"; }
-        else if(r<=8){ d.intent="중의도"; d.postType = "전환형-위기대응"; }
-        else{ d.intent="저의도"; d.postType = "SEO형-기본정보"; }
-      }else{
-        if(r<=4){ d.intent="고의도"; d.postType = (r%2===0) ? "전환형-비교결단" : "전환형-실패경고"; }
-        else if(r<=8){ d.intent="중의도"; d.postType = (r%2===0) ? "전환형-위기대응" : "신뢰형-승인사례"; }
-        else{ d.intent="저의도"; d.postType = "SEO형-기본정보"; }
-      }
-
-      if(!d.checks) d.checks = {};
-      defaultChecklist.forEach(x => { if(typeof d.checks[x.key] !== "boolean") d.checks[x.key] = false; });
-    }
-  }
-
-  function generateKeywordPack(i){
-    const angles = [
-      ["비용", "비용"], ["변제금", "변제금"], ["기각", "기각"], ["금지명령", "금지명령"],
-      ["폐지", "폐지"], ["재신청", "재신청"], ["보정", "보정명령"], ["서류", "준비서류"],
-      ["기간", "기간"], ["배우자", "배우자 재산"], ["통장압류", "통장압류"], ["채권자", "채권자 이의신청"],
-      ["소득", "소득증빙"], ["재산", "재산 목록"], ["변제계획", "변제계획안"],
-    ];
-    const verbs = [
-      ["한 번에 정리", "정리"], ["실패하는 이유", "실패 이유"], ["피하는 방법", "예방"],
-      ["가능 여부", "가능"], ["현실 기준", "기준"], ["체크리스트", "체크리스트"],
-      ["주의할 점", "주의"], ["대응 방법", "대응"], ["필수 준비", "준비"],
-    ];
-    const ang = angles[i % angles.length];
-    const vb = verbs[i % verbs.length];
-    const title = `개인회생 ${ang[0]} ${vb[0]}`;
-    const keyword = `개인회생 ${ang[1]}`;
-    return {title, keyword};
-  }
-
-  // NEW: Prompt builder
-  function buildPrompt(dayData, dayNumber){
-    const tk = (dayData.titleKeyword || "").trim();
-    const parts = tk.split("///");
-    const seoTitle = (parts[0] || "").trim();
-    const mainKeyword = (parts[1] || parts[0] || "").trim();
-
-    const type = dayData.postType || "전환형-비교결단";
-    const intent = dayData.intent || "고의도";
-
-    const toneGuide = (() => {
-      if(type === "전환형-실패경고") return "긴장감(리스크 회피) 중심으로, 독자를 겁주지 말고 ‘손해 최소화’로 설득";
-      if(type === "전환형-비교결단") return "비교표/체크리스트로 ‘지금 결정’이 쉬워지게 설계";
-      if(type === "전환형-위기대응") return "지금 당장 필요한 대응 순서(1~5단계)로 안정감 주기";
-      if(type === "신뢰형-승인사례") return "사례 기반으로 불안 완화 + 신뢰 구축(조건/한계도 함께)";
-      return "기초 정의→절차→주의점→다음 행동으로 깔끔하게";
-    })();
-
-    const intentGuide = (() => {
-      if(intent === "고의도") return "상담/제휴 전환에 가까운 독자. 비용/기간/기각/압류 같은 ‘즉시 해결 욕구’ 강조";
-      if(intent === "중의도") return "문제 해결 탐색 단계. 절차/서류/보정 같은 ‘준비 행동’ 강조";
-      return "입문 단계. 용어/기본 요건/흐름을 쉽게";
-    })();
-
-    // v1.6 Patch rules (hard)
-    const hardRules = [
-      "H2는 총 7개 고정: #1~#5 본문, #6 FAQ, #7 마무리",
-      "H3는 반드시 포함: H2 #1~#6 각각 아래 H3 최소 1개(필수), H2 #7 아래 H3 금지",
-      "H2/H3 뒤에는 p 1개 이상 필수. 문단 길면 2~3문장마다 <br><br> 삽입",
-      "CTA 총 3개 분산: CTA#1은 H2#2 내부(H3 이후 p 1개 뒤), CTA#2는 H2#4 내부(H3 이후 p 1개 뒤), CTA#3는 FAQ(H2#6) 카드 2개 이상 나온 뒤(면책 조항 직전)",
-      "CTA 바로 뒤에 <h2> 금지. CTA 뒤에는 일반 <p> 1개 이상 먼저 배치",
-      "애드센스 2회 고정: 목차 직후 1회, H2#3 전후 1회 / data-ad-client, slot 값 고정 / <script>, onclick 금지",
-      "FAQ는 Q1~Q5 정확히 5개 고정(형식 통일)",
-      "과장/단정 표현 금지(100%, 무조건, 확정 등 금지) + ‘사안별 다를 수 있음’ 명시",
-    ].join("\n- ");
-
-    const ctaPsych = [
-      "CTA 문구는 ‘지금 안 하면 생기는 손해’(기각/지연/압류/보정 실패)를 짧게 암시하고, 버튼 텍스트는 행동 1개로 명확히",
-      "버튼 위에 1문장 ‘완충 p’로 필요성(왜 지금) 만들어라",
-      "버튼 아래에 1문장 ‘완충 p’로 안심(과장 없이) 제공",
-    ].join("\n- ");
-
-    const outputSpec = [
-      "출력은 HTML 본문으로만(최상단 wrapper div 포함 가능)",
-      "목차 포함",
-      "비교표 1개 포함(전환형-비교결단일 때는 반드시)",
-      "면책 조항 포함(마지막에)",
-      "해시태그는 맨 아래 10개 내외",
-    ].join("\n- ");
-
-    return [
-`[역할]
-너는 ‘개인회생’ 생활법률 머니사이트용 콘텐츠 엔진이다. 목표는 SEO 유입 + 제휴 전환(상담/문의)이다.
-
-[오늘 Day]
-- Day: ${dayNumber}
-- 글유형: ${type}
-- 의도: ${intent}
-- SEO 제목: ${seoTitle || "(제목을 입력하세요)"}
-- 메인 키워드: ${mainKeyword || "(키워드를 입력하세요)"}
-
-[톤/설계 가이드]
-- 글 톤: ${toneGuide}
-- 독자 상태: ${intentGuide}
-
-[하드 규칙(절대 위반 금지)]
-- ${hardRules}
-
-[CTA 심리 설계(강제 적용)]
-- ${ctaPsych}
-
-[콘텐츠 출력 스펙]
-- ${outputSpec}
-
-[H2 구성(고정)]
-H2 #1: (문제 공감 + 지금 왜 급한지)
-H2 #2: (핵심 법적/절차 근거 + CTA#1 삽입)
-H2 #3: (준비물/서류/절차 단계)
-H2 #4: (선택지 비교/결정 가이드 + CTA#2 삽입)
-H2 #5: (비용/기간/기각 리스크/결과 예측 - 케이스별 범위로)
-H2 #6: (FAQ 5개 고정: Q1~Q5) — FAQ 2개 출력 후 CTA#3 삽입
-H2 #7: (마무리: 다음 행동 제시 + 면책 조항)
-
-[FAQ 고정 질문(그대로 사용)]
-Q1. 개인회생 신청 자격이 애매하면 어디서부터 확인하나요?
-Q2. 개인회생 변호사 비용은 왜 차이가 나나요?
-Q3. 보정명령/보정권고가 나오면 어떻게 대응해야 하나요?
-Q4. 금지명령이 늦어지면 압류/추심이 계속되나요?
-Q5. 기각/폐지된 뒤 재신청은 언제 가능한가요?
-
-[생성 지시]
-위 조건을 모두 만족하는 HTML 본문을 작성해라. 
-키워드(${mainKeyword})는 본문에 자연스럽게 반복하되, 과장/단정은 금지한다.
-`.trim()
-    ].join("\n");
-  }
-
-  function exportJSON(){
-    const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `lawgear_pacemaker_90d_backup_${state.startDate || formatDate(new Date())}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
-  }
-
-  function loadState(){
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      try{
-        const s = JSON.parse(raw);
-        if(s && Array.isArray(s.days) && s.days.length === 90) return normalizeState(s);
-      }catch(e){}
-    }
-    const days = Array.from({length:90}).map((_,i)=>({
-      day: i+1,
-      done:false,
-      titleKeyword:"",
-      url:"",
-      resultMemo:"",
-      postType:"전환형-비교결단",
-      intent:"고의도",
-      notes:"",
-      ctaClicks:0,
-      leads:0,
-      checks: Object.fromEntries(defaultChecklist.map(x=>[x.key,false])),
-    }));
-    return normalizeState({
-      startDate:"",
-      selectedDay:1,
-      filter:"all",
-      search:"",
-      typeFilter:"all",
-      intentFilter:"all",
-      days,
-    });
-  }
-
-  function normalizeState(s){
-    if(!s.selectedDay) s.selectedDay = 1;
-    if(!s.filter) s.filter = "all";
-    if(!s.search) s.search = "";
-    if(!s.typeFilter) s.typeFilter = "all";
-    if(!s.intentFilter) s.intentFilter = "all";
-    if(!s.days || s.days.length !== 90){
-      s.days = Array.from({length:90}).map((_,i)=>({day:i+1}));
-    }
-    s.days = s.days.map((d,i)=>({
-      day: i+1,
-      done: !!d.done,
-      titleKeyword: d.titleKeyword || "",
-      url: d.url || "",
-      resultMemo: d.resultMemo || "",
-      postType: d.postType || "전환형-비교결단",
-      intent: d.intent || "고의도",
-      notes: d.notes || "",
-      ctaClicks: Number(d.ctaClicks||0),
-      leads: Number(d.leads||0),
-      checks: normalizeChecks(d.checks),
-    }));
-    return s;
-  }
-
-  function normalizeChecks(c){
-    const obj = {};
-    defaultChecklist.forEach(x => obj[x.key] = (c && typeof c[x.key]==="boolean") ? c[x.key] : false);
-    return obj;
-  }
-
-  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  function getDay(n){ return state.days[n-1]; }
-
-  // Date helpers
-  function parseDate(s){
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");
-    if(!m) return new Date();
-    const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
-    if(isNaN(d.getTime())) return new Date();
-    return d;
-  }
-  function addDays(date, days){ const d = new Date(date); d.setDate(d.getDate()+days); return d; }
-  function formatDate(d){
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const da = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${da}`;
-  }
-  function formatMMDD(d){
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const da = String(d.getDate()).padStart(2,"0");
-    return `${m}/${da}`;
-  }
-  function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
-  function computeDayFromStart(startStr, now){
-    const start = parseDate(startStr);
-    const ms = now.getTime() - start.getTime();
-    const days = Math.floor(ms / (1000*60*60*24)) + 1;
-    return days;
-  }
-})();
-</script>
+    <!-- Script -->
+    <script>
+        // Data & Logic
+        const legs = [
+            { id: 'Traffic', name: '교통/사고', color: 'amber', icon: 'fa-car' },
+            { id: 'Debt', name: '빚/회생', color: 'indigo', icon: 'fa-file-invoice-dollar' },
+            { id: 'Housing', name: '주거/생활', color: 'emerald', icon: 'fa-house-chimney' },
+            { id: 'Crime', name: '사기/범죄', color: 'rose', icon: 'fa-user-shield' }
+        ];
+
+        // Content Data (160 items)
+        const contentTemplates = {
+            Traffic: [
+                { t: "문콕하고 도망간 차 잡는법 CCTV 확보부터 경찰 신고까지", k: "문콕보상", p: 1 },
+                { t: "주차장 뺑소니 물피도주 벌금 20만원? 합의금 팁", k: "물피도주신고", p: 1 },
+                { t: "이중주차 차 밀다가 쿵! 과실 비율 판례 총정리", k: "이중주차사고", p: 1 },
+                { t: "고속도로 1차로 정속주행 신고 방법 (상품권 발송)", k: "정속주행신고", p: 2 },
+                { t: "교통사고 합의요령 통원치료만으로 200만원 받기", k: "교통사고합의금", p: 4 },
+                { t: "12대 중과실 신호위반 사고 형사합의금 시세", k: "12대중과실", p: 3 },
+                { t: "음주운전 방조죄 동승자 처벌 기준과 벌금", k: "음주운전방조", p: 2 },
+                { t: "민식이법 스쿨존 사고 벌금 500만원 피하는 법", k: "민식이법", p: 3 },
+                { t: "전동 킥보드 사고 보험 처리 및 합의금 가이드", k: "킥보드사고", p: 2 },
+                { t: "자전거 사고 일상생활배상책임보험 처리 노하우", k: "자전거사고", p: 1 }
+            ],
+            Debt: [
+                { t: "빚 독촉 전화 안 받는 법: 불법추심 신고하고 보상받기", k: "불법추심대응", p: 1 },
+                { t: "통장압류 해제 방법: 최저생계비 185만원 지키기", k: "통장압류", p: 1 },
+                { t: "개인회생 신청자격: 월급 200만원도 탕감 가능할까?", k: "개인회생자격", p: 3 },
+                { t: "주식 코인 빚 개인회생 가능할까? 최신 법원 판례", k: "주식빚탕감", p: 3 },
+                { t: "개인회생 금지명령 기각 사유와 재신청 전략", k: "금지명령", p: 3 },
+                { t: "정부지원 서민대출 햇살론 자격 조건 및 부결 대안", k: "햇살론", p: 4 },
+                { t: "카드값 리볼빙의 함정: 신용등급 하락 막는 법", k: "리볼빙해지", p: 2 },
+                { t: "핸드폰 요금 미납 시 발신정지와 소액결제 차단", k: "통신연체", p: 1 },
+                { t: "상속포기 한정승인 차이점 및 비용 비교", k: "상속포기", p: 2 },
+                { t: "개인파산 면책 후 신용카드 발급 시기 정리", k: "면책후신용카드", p: 4 }
+            ],
+            Housing: [
+                { t: "층간소음 법적 기준 데시벨과 분쟁조정위원회 신청", k: "층간소음기준", p: 1 },
+                { t: "아랫집 누수 책임: 일상생활배상책임보험 처리 꿀팁", k: "일상생활배상책임보험", p: 4 },
+                { t: "전세 보증금 반환 내용증명 작성법 (양식 첨부)", k: "전세보증금반환", p: 2 },
+                { t: "전세사기 예방: 등기부등본 을구 근저당 계산법", k: "전세사기예방", p: 1 },
+                { t: "월세 이사 나갈 때 도배 장판 원상복구 기준", k: "원상복구의무", p: 2 },
+                { t: "묵시적 갱신 후 해지 통보: 중개수수료 누가 낼까?", k: "묵시적갱신", p: 3 },
+                { t: "장기수선충당금 반환: 이사할 때 꼭 챙겨야 할 돈", k: "장기수선충당금", p: 1 },
+                { t: "아파트 화장실 담배 냄새 층간흡연 대처법", k: "층간흡연", p: 1 },
+                { t: "보일러 고장 수리비 집주인 vs 세입자 책임 소재", k: "보일러수리", p: 2 },
+                { t: "행복주택 청년 버팀목 전세자금 대출 조건 정리", k: "버팀목전세", p: 4 }
+            ],
+            Crime: [
+                { t: "보이스피싱 지급정지 골든타임 30분 대처 매뉴얼", k: "보이스피싱신고", p: 4 },
+                { t: "당근마켓 사기 신고 방법: 더치트 조회부터 경찰서까지", k: "중고거래사기", p: 1 },
+                { t: "스미싱 문자 클릭했을 때 해킹 확인 및 초기화 방법", k: "스미싱문자", p: 2 },
+                { t: "형사 배상명령신청서 작성법: 민사 없이 돈 받는 법", k: "배상명령신청", p: 3 },
+                { t: "통화녹음 법적 효력: 상대방 동의 없는 녹취는 불법?", k: "통화녹음합법", p: 2 },
+                { t: "몸캠피싱 협박 무대응이 답? 영상 유포 막는 법", k: "몸캠피싱대처", p: 4 },
+                { t: "로맨스 스캠 사기: 인스타 외국인 의사의 정체", k: "로맨스스캠", p: 2 },
+                { t: "롤 모욕죄 고소 성립 요건: 특정성 공연성 분석", k: "롤고소", p: 1 },
+                { t: "상간녀 소송 증거 수집과 위자료 청구 금액", k: "상간녀소송", p: 4 },
+                { t: "명예훼손죄 벌금 기준: 사이버 모욕과 사실적시", k: "사이버명예훼손", p: 3 }
+            ]
+        };
+
+        const generateDb = () => {
+            let data = [];
+            let id = 1;
+            legs.forEach(leg => {
+                const templates = contentTemplates[leg.id];
+                templates.forEach((tmpl, idx) => {
+                    data.push(createItem(id++, leg.id, tmpl.t, tmpl.k, tmpl.p));
+                    data.push(createItem(id++, leg.id, `[사례] ${tmpl.k} 실제 해결 후기 및 판례 분석`, tmpl.k + "후기", Math.min(4, tmpl.p + 1)));
+                    data.push(createItem(id++, leg.id, `${tmpl.k} 자주 묻는 질문 BEST 5 총정리`, tmpl.k + "질문", Math.max(1, tmpl.p - 1)));
+                    data.push(createItem(id++, leg.id, `2026년 ${tmpl.k} 법 개정 사항 및 주의할 점`, tmpl.k + "법개정", 3));
+                });
+            });
+            return data;
+        };
+
+        const createItem = (id, legId, title, keyword, phase) => {
+            return {
+                id, leg: legId, title: `${title} /// ${keyword}`, keyword, phase,
+                hook: "이 글을 읽지 않으면 100만 원 손해볼 수 있습니다. 전문가의 조언을 확인하세요.",
+                body: "독자의 공포심을 자극하고 해결책을 제시하세요. 법적 근거(제O조)를 명시하여 신뢰를 높이세요.",
+                seo: `${keyword}, ${keyword}비용, ${keyword}절차`,
+                cpa: legId === 'Debt' ? '개인회생 무료 조회' : '무료 법률 상담',
+                published: false, url: '', affiliateUrl: ''
+            };
+        };
+
+        let db = generateDb();
+        const STORAGE_KEY = 'lawgear_pacemaker_v1';
+
+        function init() { loadData(); updateUI(); }
+        
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const savedData = JSON.parse(saved);
+                savedData.forEach(s => {
+                    const item = db.find(d => d.id === s.id);
+                    if (item) { item.published = s.published; item.url = s.url; item.affiliateUrl = s.affiliateUrl; }
+                });
+            }
+        }
+
+        function saveData() {
+            const dataToSave = db.filter(d => d.published).map(d => ({ id: d.id, published: d.published, url: d.url, affiliateUrl: d.affiliateUrl }));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            updateUI();
+        }
+
+        function updateUI() {
+            // Null check helper
+            const setSafe = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
+            const styleSafe = (id, width) => { const el = document.getElementById(id); if(el) el.style.width = width; };
+
+            const total = db.length;
+            const done = db.filter(d => d.published).length;
+            const pct = Math.round((done / total) * 100);
+            
+            // Global Nav
+            styleSafe('globalProgressBar', `${pct}%`);
+            setSafe('globalProgressText', `${pct}%`);
+
+            // Dashboard View
+            setSafe('totalPublishedCount', done);
+            setSafe('remainingCount', total - done);
+
+            legs.forEach(leg => {
+                const legDone = db.filter(d => d.leg === leg.id && d.published).length;
+                setSafe(`stat-${leg.id.toLowerCase()}`, `${legDone}/40`);
+            });
+
+            // Level & Money
+            let levelName = "초보 블로거", levelIcon = "fa-user", levelColor = "text-slate-400";
+            if (done >= 5) { levelName = "브론즈 (Bronze)"; levelIcon = "fa-medal"; levelColor = "text-amber-700"; }
+            if (done >= 20) { levelName = "실버 (Silver)"; levelIcon = "fa-medal"; levelColor = "text-slate-400"; }
+            if (done >= 50) { levelName = "골드 (Gold)"; levelIcon = "fa-trophy"; levelColor = "text-yellow-500"; }
+            if (done >= 100) { levelName = "다이아몬드 (Diamond)"; levelIcon = "fa-gem"; levelColor = "text-cyan-400"; }
+            if (done >= 150) { levelName = "마스터 (Master)"; levelIcon = "fa-crown"; levelColor = "text-indigo-600"; }
+
+            setSafe('currentLevelName', levelName);
+            const badge = document.getElementById('levelBadge');
+            if(badge) badge.innerHTML = `<i class="fa-solid ${levelIcon} ${levelColor}"></i>`;
+            setSafe('expText', `${done} / ${total} XP`);
+            styleSafe('levelProgressBar', `${pct}%`);
+
+            let moneyScore = 0;
+            db.filter(d => d.published).forEach(d => {
+                if(d.leg === 'Debt') moneyScore += 5;
+                else if(d.leg === 'Traffic') moneyScore += 4;
+                else if(d.leg === 'Housing') moneyScore += 3;
+                else moneyScore += 2;
+            });
+            setSafe('moneyPowerScore', moneyScore);
+
+            // Recent
+            const recent = db.filter(d => d.published).slice(-5).reverse();
+            const recentList = document.getElementById('recentActivityList');
+            if (recentList) {
+                if (recent.length > 0) {
+                    recentList.innerHTML = recent.map(item => `
+                        <div class="flex items-center gap-2 text-sm text-slate-600">
+                            <i class="fa-solid fa-check-circle text-emerald-500"></i>
+                            <span class="truncate font-medium">${item.title.split('///')[0]}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    recentList.innerHTML = '<p class="text-xs text-slate-400 italic">아직 활동 내역이 없습니다.</p>';
+                }
+            }
+
+            // Next Mission
+            const nextItem = db.sort((a, b) => a.phase - b.phase).find(d => !d.published);
+            if (nextItem) {
+                setSafe('nextMissionTitle', nextItem.title.split('///')[0]);
+                setSafe('nextMissionHook', `"${nextItem.hook}"`);
+                const nextLegEl = document.getElementById('nextMissionLeg');
+                if(nextLegEl) nextLegEl.innerText = nextItem.leg.toUpperCase();
+                
+                const phaseNames = ["기초 공사", "트래픽 폭발", "신뢰 구축", "수익 사냥"];
+                const phaseEl = document.getElementById('currentPhaseTitle');
+                if(phaseEl) phaseEl.innerHTML = `Lv.${nextItem.phase} ${phaseNames[nextItem.phase-1]}`;
+            } else {
+                setSafe('currentPhaseTitle', "🎉 마스터(Master)");
+                setSafe('nextMissionTitle', "완료!");
+                setSafe('nextMissionHook', "모든 퀘스트를 완료했습니다!");
+            }
+
+            renderRoadmap();
+            renderFullLibrary();
+            renderCharts();
+        }
+
+        // --- VIEWS ---
+        function switchView(viewId) {
+            ['dashboard', 'roadmap', 'library', 'settings'].forEach(v => {
+                const el = document.getElementById(`${v}-view`);
+                if(el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(`${viewId}-view`);
+            if(target) target.classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function renderRoadmap() {
+            for(let i=1; i<=4; i++) {
+                const container = document.getElementById(`phase${i}-grid`);
+                if(!container) continue;
+                container.innerHTML = '';
+                
+                db.filter(d => d.phase === i).forEach(item => {
+                    const isDone = item.published;
+                    const legColor = item.leg === 'Traffic' ? 'amber' : item.leg === 'Debt' ? 'indigo' : item.leg === 'Housing' ? 'emerald' : 'rose';
+                    const el = document.createElement('div');
+                    el.className = `bg-white p-4 rounded-xl border ${isDone ? 'border-slate-200 opacity-60' : 'border-slate-200'} card-shadow card-hover relative group cursor-pointer`;
+                    if(!isDone) el.classList.add('border-l-4', `border-l-${legColor}-500`);
+                    
+                    el.onclick = () => openModal(item.id);
+                    el.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-${legColor}-50 text-${legColor}-700 uppercase">${item.leg}</span>
+                            <div class="flex items-center gap-1">
+                                ${item.affiliateUrl ? '<span class="text-emerald-500 text-xs"><i class="fa-solid fa-dollar-sign"></i></span>' : ''}
+                                ${isDone ? '<i class="fa-solid fa-circle-check text-emerald-500"></i>' : '<i class="fa-regular fa-circle text-slate-300"></i>'}
+                            </div>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800 leading-snug ${isDone ? 'line-through text-slate-400' : ''}">${item.title.split('///')[0]}</h4>
+                    `;
+                    container.appendChild(el);
+                });
+            }
+        }
+
+        function renderFullLibrary() {
+            const container = document.getElementById('fullLibraryGrid');
+            if(!container) return;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+            
+            container.innerHTML = '';
+            
+            const filtered = db.filter(d => {
+                const matchSearch = d.title.toLowerCase().includes(search) || d.keyword.toLowerCase().includes(search);
+                const matchFilter = filter === 'all' ? true : (filter === d.leg || (filter === 'published' && d.published) || (filter === 'unpublished' && !d.published));
+                return matchSearch && matchFilter;
+            });
+
+            filtered.forEach(item => {
+                const el = document.createElement('div');
+                el.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-sm hover:border-indigo-300 cursor-pointer flex flex-col justify-between h-32";
+                el.onclick = () => openModal(item.id);
+                el.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 rounded-full ${item.published ? 'bg-emerald-500' : 'bg-slate-300'}"></span>
+                            <span class="text-xs text-slate-400 font-bold uppercase">${item.leg}</span>
+                            ${item.affiliateUrl ? '<span class="text-emerald-500 text-xs ml-auto"><i class="fa-solid fa-dollar-sign"></i></span>' : ''}
+                        </div>
+                        <p class="font-medium text-slate-800 line-clamp-2">${item.title.split('///')[0]}</p>
+                    </div>
+                    <div class="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded w-fit mt-2">Lv.${item.phase}</div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function filterLibrary(filterType) {
+            switchView('library');
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach(b => {
+                if(b.dataset.filter === filterType) b.click();
+            });
+        }
+
+        // --- CHARTS ---
+        function renderCharts() {
+            const ctx = document.getElementById('radarChart')?.getContext('2d');
+            if(ctx) {
+                if(window.myRadar) window.myRadar.destroy();
+                window.myRadar = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['수익성', '접근성', '긴급성', '확장성', '난이도'],
+                        datasets: [
+                            { label: 'Traffic', data: [4,5,4,5,2], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.2)' },
+                            { label: 'Debt', data: [5,3,5,4,4], borderColor: '#4f46e5', backgroundColor: 'rgba(79,70,229,0.2)' },
+                            { label: 'Housing', data: [3,5,3,4,2], borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.2)' },
+                            { label: 'Crime', data: [2,4,5,3,3], borderColor: '#f43f5e', backgroundColor: 'rgba(244,63,94,0.2)' }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            const sunburstEl = document.getElementById('sunburstChart');
+            if(sunburstEl) {
+                const data = [{
+                    type: "sunburst",
+                    labels: ["Law Gear", "Traffic", "Debt", "Housing", "Crime"],
+                    parents: ["", "Law Gear", "Law Gear", "Law Gear", "Law Gear"],
+                    values: [160, 40, 40, 40, 40],
+                    outsidetextfont: {size: 14, color: "#377eb8"},
+                    marker: {colors: ["#1e293b", "#f59e0b", "#4f46e5", "#10b981", "#f43f5e"]}
+                }];
+                Plotly.newPlot('sunburstChart', data, {margin: {l:0, r:0, b:0, t:0}}, {responsive: true});
+            }
+        }
+
+        // --- UTILS & MODAL ---
+        let currentModalId = null;
+        function openModal(id) {
+            currentModalId = id;
+            const item = db.find(d => d.id === id);
+            if(!item) return;
+            
+            const legColor = item.leg === 'Traffic' ? 'bg-amber-500' : item.leg === 'Debt' ? 'bg-indigo-500' : item.leg === 'Housing' ? 'bg-emerald-500' : 'bg-rose-500';
+            const mLeg = document.getElementById('m-leg'); if(mLeg) { mLeg.className = `px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-white ${legColor}`; mLeg.innerText = item.leg; }
+            const mPhase = document.getElementById('m-phase'); if(mPhase) mPhase.innerText = `LV.${item.phase}`;
+            const mTitle = document.getElementById('m-title'); if(mTitle) mTitle.innerText = item.title.split('///')[0];
+            const mCopy = document.getElementById('m-copy-text'); if(mCopy) mCopy.innerText = item.title;
+            const mKey = document.getElementById('m-keyword'); if(mKey) mKey.innerText = item.keyword;
+            const mHook = document.getElementById('m-hook'); if(mHook) mHook.innerText = `"${item.hook}"`;
+            const mBody = document.getElementById('m-body'); if(mBody) mBody.innerText = item.body;
+
+            const chk = document.getElementById('m-published-check');
+            const urlSec = document.getElementById('m-url-section');
+            if(chk) chk.checked = item.published;
+            if(urlSec) {
+                if(item.published) urlSec.classList.remove('hidden');
+                else urlSec.classList.add('hidden');
+            }
+            
+            const mUrl = document.getElementById('m-url-input'); if(mUrl) mUrl.value = item.url || '';
+            const mAff = document.getElementById('m-affiliate-input'); if(mAff) mAff.value = item.affiliateUrl || '';
+
+            renderInternalLinks();
+
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modalContent');
+            if(modal) modal.classList.remove('hidden');
+            if(content) setTimeout(() => content.classList.remove('scale-95'), 10);
+        }
+
+        function closeModal() {
+            const content = document.getElementById('modalContent');
+            const modal = document.getElementById('modal');
+            if(content) content.classList.add('scale-95');
+            if(modal) setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        function togglePublishStatus() {
+            const chk = document.getElementById('m-published-check');
+            const urlSec = document.getElementById('m-url-section');
+            const item = db.find(d => d.id === currentModalId);
+            
+            if (chk && item) {
+                if (chk.checked) {
+                    if(urlSec) urlSec.classList.remove('hidden');
+                    item.published = true;
+                } else {
+                    if(urlSec) urlSec.classList.add('hidden');
+                    item.published = false;
+                }
+                saveData();
+            }
+        }
+
+        function savePostDetails() {
+            const item = db.find(d => d.id === currentModalId);
+            if(item) {
+                const u = document.getElementById('m-url-input');
+                const a = document.getElementById('m-affiliate-input');
+                if(u) item.url = u.value;
+                if(a) item.affiliateUrl = a.value;
+                saveData();
+            }
+        }
+
+        function openNextMission() {
+            const next = db.sort((a, b) => a.phase - b.phase).find(d => !d.published);
+            if(next) openModal(next.id);
+        }
+
+        function sendToTelegram(event) {
+            event.stopPropagation();
+            const next = db.sort((a, b) => a.phase - b.phase).find(d => !d.published);
+            if(!next) return alert("완료!");
+            const msg = `[Law Gear 미션]\n🔥 Lv.${next.phase}\n제목: ${next.title.split('///')[0]}\n키워드: ${next.keyword}\n공략: ${next.body}`;
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function copyToClipboard(id) {
+            navigator.clipboard.writeText(document.getElementById(id).innerText).t
+        function copyValue(id){
+            const el = document.getElementById(id);
+            if(!el) return;
+            navigator.clipboard.writeText(el.value || el.innerText || '').then(() => alert('복사완료'));
+        }
+
+        // --- INTERNAL LINK LIBRARY ---
+        const LINK_STORE_KEY = 'lawgear_internal_links_v1';
+
+        function getLinkLibrary(){
+            try { return JSON.parse(localStorage.getItem(LINK_STORE_KEY) || '[]'); }
+            catch(e){ return []; }
+        }
+
+        function saveLinkLibrary(list){
+            localStorage.setItem(LINK_STORE_KEY, JSON.stringify(list || []));
+        }
+
+        function normalizeUrl(url){
+            return (url || '').trim();
+        }
+
+        function normalizeAnchor(anchor){
+            return (anchor || '').trim();
+        }
+
+        function ensureItem(){
+            return db.find(d => d.id === currentModalId);
+        }
+
+        function addInternalLinkToPost(){
+            const item = ensureItem();
+            if(!item) return;
+
+            const url = normalizeUrl(document.getElementById('m-il-url')?.value);
+            const anchor = normalizeAnchor(document.getElementById('m-il-anchor')?.value);
+
+            if(!url || !anchor){
+                alert('URL과 앵커를 모두 입력하세요.');
+                return;
+            }
+
+            // Save to global library
+            const lib = getLinkLibrary();
+            const existing = lib.find(x => x.url === url);
+            const linkId = existing ? existing.id : (Date.now().toString(36) + Math.random().toString(36).slice(2,6));
+            if(!existing){
+                lib.unshift({ id: linkId, url, anchor, createdAt: Date.now() });
+                saveLinkLibrary(lib);
+            } else if(anchor && existing.anchor !== anchor){
+                existing.anchor = anchor;
+                saveLinkLibrary(lib);
+            }
+
+            // Attach to post
+            item.internalLinks = Array.isArray(item.internalLinks) ? item.internalLinks : [];
+            if(!item.internalLinks.includes(linkId)){
+                item.internalLinks.unshift(linkId);
+                saveDb();
+            }
+
+            renderInternalLinks();
+            document.getElementById('m-il-url').value = '';
+            document.getElementById('m-il-anchor').value = '';
+        }
+
+        function removeInternalLinkFromPost(linkId){
+            const item = ensureItem();
+            if(!item) return;
+            item.internalLinks = (item.internalLinks || []).filter(x => x !== linkId);
+            saveDb();
+            renderInternalLinks();
+        }
+
+        function renderInternalLinks(){
+            const wrap = document.getElementById('m-internal-links');
+            if(!wrap) return;
+
+            const item = ensureItem();
+            const lib = getLinkLibrary();
+            const ids = (item && Array.isArray(item.internalLinks)) ? item.internalLinks : [];
+
+            if(!ids.length){
+                wrap.innerHTML = '<div class="text-slate-500">아직 연결된 내부링크가 없습니다. URL과 앵커를 입력하고 “이 글에 연결”을 눌러주세요.</div>';
+                return;
+            }
+
+            const rows = ids.map(id => {
+                const l = lib.find(x => x.id === id);
+                const url = l?.url || '(삭제됨)';
+                const anchor = l?.anchor || '(앵커 없음)';
+                return `
+                    <div class="flex items-start justify-between gap-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
+                        <div class="min-w-0">
+                            <div class="font-bold text-slate-800 truncate">${anchor}</div>
+                            <div class="text-slate-500 truncate">${url}</div>
+                        </div>
+                        <button onclick="removeInternalLinkFromPost('${id}')" class="text-xs font-bold px-2 py-1 rounded bg-rose-600 text-white hover:bg-rose-500 transition-colors">삭제</button>
+                    </div>
+                `;
+            }).join('');
+
+            wrap.innerHTML = rows;
+        }
+
+        function buildSnippets(){
+            const item = ensureItem();
+            const lib = getLinkLibrary();
+            const ids = (item && Array.isArray(item.internalLinks)) ? item.internalLinks : [];
+            const links = ids.map(id => lib.find(x => x.id === id)).filter(Boolean);
+
+            if(!links.length) return { snippets: '', html: '' };
+
+            // 3가지 문맥 문장(각 링크마다 1개씩, 최대 3개)
+            const picks = links.slice(0, 3);
+            const snippets = picks.map((l, i) => {
+                const n = i+1;
+                return `${n}) 관련 글도 같이 보면 도움이 됩니다: ${l.anchor} (${l.url})`;
+            }).join('\n');
+
+            // HTML 블록(내부링크 모음)
+            const htmlBlock = '<div style="margin: 26px 0; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">\n' +
+                              '  <p style="margin:0 0 10px 0; font-weight:800; color:#0f172a;">📌 함께 보면 좋은 글</p>\n' +
+                              links.slice(0,5).map(l => `  <p style="margin:0 0 8px 0; line-height:1.7;"><a href="${l.url}" target="_self" style="color:#1e40af; text-decoration:none; font-weight:800;">${l.anchor}</a></p>`).join('\n') +
+                              '\n</div>';
+
+            return { snippets, html: htmlBlock };
+        }
+
+        function copyInternalLinkSnippets(){
+            const out = buildSnippets();
+            if(!out.snippets){ alert('연결된 내부링크가 없습니다.'); return; }
+            navigator.clipboard.writeText(out.snippets).then(() => alert('복사완료'));
+        }
+
+        function copyInternalLinksHtml(){
+            const out = buildSnippets();
+            if(!out.html){ alert('연결된 내부링크가 없습니다.'); return; }
+            navigator.clipboard.writeText(out.html).then(() => alert('복사완료'));
+        }
+
+        function openLinkLibrary(){
+            const lib = getLinkLibrary();
+            const top = lib.slice(0, 30).map(l => `• ${l.anchor} — ${l.url}`).join('\n') || '(비어있음)';
+            alert('내부링크 라이브러리 (최근 30개)\n\n' + top);
+        }
+hen(() => alert('복사완료'));
+        }
+
+        function resetData() {
+            if(confirm('정말 모든 데이터를 초기화하시겠습니까? (복구 불가)')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
+        function exportData() {
+            const dataToSave = db.filter(d => d.published).map(d => ({ id: d.id, published: d.published, url: d.url, affiliateUrl: d.affiliateUrl }));
+            const blob = new Blob([JSON.stringify(dataToSave)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lawgear_data.json`;
+            a.click();
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                const loaded = JSON.parse(e.target.result);
+                loaded.forEach(s => {
+                    const item = db.find(d => d.id === s.id);
+                    if(item) { item.published = s.published; item.url = s.url; item.affiliateUrl = s.affiliateUrl; }
+                });
+                saveData();
+                alert('복원 완료');
+            };
+            reader.readAsText(file);
+        }
+
+        // Filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-slate-800', 'text-white');
+                    b.classList.add('bg-white', 'text-slate-600');
+                    b.classList.remove('active');
+                });
+                e.target.classList.remove('bg-white', 'text-slate-600');
+                e.target.classList.add('bg-slate-800', 'text-white', 'active');
+                renderFullLibrary();
+            });
+        });
+        const searchInput = document.getElementById('searchInput');
+        if(searchInput) searchInput.addEventListener('input', renderFullLibrary);
+
+        init();
+    </script>
 </body>
 </html>
