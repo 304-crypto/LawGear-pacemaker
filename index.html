@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LawGear Pacemaker — 개인회생 90일 전환 대시보드</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#0f1730;
+      --card:#111c3a;
+      --muted:#aab6d3;
+      --text:#e9eeff;
+      --line:rgba(255,255,255,.10);
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --info:#60a5fa;
+      --chip:#1b2a55;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, "Noto Sans KR", Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(96,165,250,.25), transparent 60%),
+                  radial-gradient(900px 600px at 85% 5%, rgba(34,197,94,.18), transparent 55%),
+                  radial-gradient(1000px 700px at 50% 110%, rgba(245,158,11,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    header{
+      padding:28px 16px 10px;
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+      justify-content:space-between;
+    }
+    .title{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(96,165,250,.95), rgba(34,197,94,.85));
+      box-shadow: var(--shadow);
+      display:grid; place-items:center;
+      font-weight:900;
+      color:#071026;
+    }
+    h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .subtitle{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .top-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    button, .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.15s ease;
+      font-weight:700;
+      font-size:13px;
+    }
+    button:hover, .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
+    button:active{transform: translateY(0)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(245,158,11,.95), rgba(239,68,68,.85));
+      border: none;
+      color:#0b1020;
+    }
+    .btn.good{
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(96,165,250,.75));
+      border:none;color:#0b1020;
+    }
+
+    main{
+      max-width:1200px;
+      margin:0 auto;
+      padding: 10px 16px 40px;
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns: 1fr}
+    }
+    .panel{
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panel .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .panel .hd h2{
+      font-size:13px;margin:0;letter-spacing:.2px;
+    }
+    .panel .bd{padding:14px}
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .grid3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
+    .card{
+      background: rgba(17,28,58,.75);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:12px;
+    }
+    .metric{
+      display:flex; justify-content:space-between; align-items:flex-end; gap:10px;
+    }
+    .metric .k{font-size:12px;color:var(--muted);font-weight:700}
+    .metric .v{font-size:18px;font-weight:900}
+    .tiny{font-size:11px;color:var(--muted)}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{
+      background: rgba(27,42,85,.85);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--text);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      display:flex;gap:8px;align-items:center;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip[data-active="true"]{outline:2px solid rgba(96,165,250,.65)}
+    .dot{width:8px;height:8px;border-radius:999px}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+    .dot.info{background:var(--info)}
+
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input[type="text"], input[type="number"], textarea, select{
+      width:100%;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      outline:none;
+    }
+    textarea{min-height:90px; resize:vertical}
+    label{font-size:12px;color:var(--muted);font-weight:800; display:block; margin:0 0 6px}
+    .sep{height:1px;background:var(--line);margin:12px 0}
+    .hint{font-size:12px;color:rgba(233,238,255,.82)}
+    .hint b{color:var(--text)}
+    .warnbox{
+      border:1px solid rgba(245,158,11,.35);
+      background: rgba(245,158,11,.10);
+      padding:10px 12px;
+      border-radius:14px;
+      color: rgba(233,238,255,.92);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    /* Calendar 90 */
+    .calendar{
+      display:grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap:8px;
+    }
+    @media (max-width: 980px){
+      .calendar{grid-template-columns: repeat(6, 1fr)}
+    }
+    .day{
+      background: rgba(17,28,58,.72);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:10px 10px 8px;
+      cursor:pointer;
+      position:relative;
+      min-height:74px;
+      transition:.12s ease;
+    }
+    .day:hover{transform: translateY(-1px); background: rgba(17,28,58,.92)}
+    .day.selected{outline:2px solid rgba(96,165,250,.75)}
+    .day .num{
+      font-weight:900;
+      font-size:12px;
+      color: rgba(233,238,255,.92);
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .badge{
+      font-size:10px;
+      padding:4px 7px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: rgba(233,238,255,.86);
+      font-weight:900;
+    }
+    .badge.good{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12)}
+    .badge.warn{border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.12)}
+    .badge.bad{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.12)}
+    .day .mini{
+      margin-top:8px;
+      font-size:10px;
+      color: rgba(170,182,211,.95);
+      display:flex; gap:6px; flex-wrap:wrap;
+    }
+    .mini span{
+      background: rgba(27,42,85,.75);
+      border:1px solid rgba(255,255,255,.08);
+      padding:4px 6px;
+      border-radius:999px;
+      font-weight:800;
+    }
+
+    .checklist{
+      display:grid;
+      gap:8px;
+    }
+    .check{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+    }
+    .check input{margin-top:2px}
+    .check .t{font-weight:900;font-size:13px}
+    .check .d{font-size:11px;color:var(--muted);margin-top:2px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      font-size:12px;
+      font-weight:900;
+    }
+
+    .footer-note{
+      max-width:1200px;
+      margin:0 auto;
+      padding: 0 16px 24px;
+      color: rgba(170,182,211,.95);
+      font-size:12px;
+    }
+    a{color: rgba(96,165,250,.95); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <div class="logo">LG</div>
+      <div>
+        <h1>LawGear Pacemaker — 개인회생 90일 전환 대시보드</h1>
+        <div class="subtitle">광고비 0원 / 블로그만으로 전환 테스트 → 확장. (데이터는 브라우저 <span class="mono">localStorage</span>에 저장)</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="btn good" id="btnToday">오늘로 이동</button>
+      <button class="btn" id="btnExport">백업(JSON)</button>
+      <label class="btn" for="importFile" style="cursor:pointer">복원(JSON)</label>
+      <input id="importFile" type="file" accept="application/json" style="display:none" />
+      <button class="btn" id="btnReset">초기화</button>
+      <button class="btn primary" id="btnAutoFill">90일 키워드/유형 자동배치</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: Control / Details -->
+    <section class="panel">
+      <div class="hd">
+        <h2>오늘의 퀘스트 & 선택한 Day 편집</h2>
+        <span class="pill" id="dayLabel">Day 1</span>
+      </div>
+      <div class="bd">
+
+        <div class="grid2">
+          <div class="card">
+            <div class="metric">
+              <div>
+                <div class="k">진행률</div>
+                <div class="tiny">완료한 Day / 90</div>
+              </div>
+              <div class="v" id="progressPct">0%</div>
+            </div>
+            <div class="sep"></div>
+            <div class="tiny">완료: <b id="doneCount">0</b> / 90</div>
+          </div>
+
+          <div class="card">
+            <div class="metric">
+              <div>
+                <div class="k">전환 체크</div>
+                <div class="tiny">CTA 클릭/문의(수기)</div>
+              </div>
+              <div class="v" id="leadCount">0</div>
+            </div>
+            <div class="sep"></div>
+            <div class="tiny">※ 여기 숫자는 “네가 기록한 값” 기준</div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between; align-items:flex-start">
+          <div style="flex:1; min-width:220px">
+            <label>90일 시작일</label>
+            <input type="text" id="startDate" placeholder="예) 2026-02-16" />
+            <div class="tiny">비워두면 “오늘”을 Day 1로 자동 설정</div>
+          </div>
+          <div style="flex:1; min-width:220px">
+            <label>현재 선택 Day</label>
+            <select id="daySelect"></select>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div>
+            <label>글 유형(템플릿)</label>
+            <select id="postType">
+              <option value="전환형-비교결단">전환형-비교결단 (돈되는 글)</option>
+              <option value="전환형-실패경고">전환형-실패경고 (전환 최고)</option>
+              <option value="전환형-위기대응">전환형-위기대응 (기각/압류/폐지)</option>
+              <option value="신뢰형-승인사례">신뢰형-승인사례 (안도감/신뢰)</option>
+              <option value="SEO형-기본정보">SEO형-기본정보 (유입용)</option>
+            </select>
+          </div>
+          <div>
+            <label>키워드 의도</label>
+            <select id="intent">
+              <option value="고의도">고의도 (상담 직전)</option>
+              <option value="중의도">중의도 (문제 해결)</option>
+              <option value="저의도">저의도 (기초 정보)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <label>SEO 제목 /// 메인키워드</label>
+        <input type="text" id="titleKeyword" placeholder="예) 개인회생 변호사 비용 비교///개인회생 변호사 비용" />
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div>
+            <label>작성/발행 URL (선택)</label>
+            <input type="text" id="url" placeholder="https://..." />
+          </div>
+          <div>
+            <label>성과 메모 (수기)</label>
+            <input type="text" id="resultMemo" placeholder="예) CTA 클릭 2, 문의 1" />
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="warnbox">
+          <b>전환 최소 조건</b><br>
+          ① CTA 3개(중간/FAQ뒤/말미) ② 내부링크 5개 ③ FAQ 5개(Q1~Q5) 고정 ④ 과장/단정 금지
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="metric">
+              <div>
+                <div class="k">CTA 클릭(수기)</div>
+                <div class="tiny">대충이라도 기록</div>
+              </div>
+              <div class="v" id="ctaClicksVal">0</div>
+            </div>
+            <div class="sep"></div>
+            <label class="tiny">오늘 CTA 클릭 수</label>
+            <input type="number" id="ctaClicks" min="0" step="1" />
+          </div>
+
+          <div class="card">
+            <div class="metric">
+              <div>
+                <div class="k">문의/리드(수기)</div>
+                <div class="tiny">폼/카톡/전화 등</div>
+              </div>
+              <div class="v" id="leadsVal">0</div>
+            </div>
+            <div class="sep"></div>
+            <label class="tiny">오늘 문의(리드) 수</label>
+            <input type="number" id="leads" min="0" step="1" />
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <button class="btn good" id="btnMarkDone">✅ 오늘 Day 완료 처리</button>
+          <button class="btn" id="btnUnDone">↩️ 완료 취소</button>
+        </div>
+
+        <div class="sep"></div>
+
+        <label>체크리스트</label>
+        <div class="checklist" id="checklist"></div>
+
+        <div class="sep"></div>
+
+        <label>메모(자유)</label>
+        <textarea id="notes" placeholder="예) CTA 문구가 약했음 / 다음 글에서 '기각' 키워드 강화 / 내부링크 구조 수정"></textarea>
+
+        <div style="height:10px"></div>
+        <button class="btn" id="btnSave">저장</button>
+      </div>
+    </section>
+
+    <!-- RIGHT: Dashboard / Calendar -->
+    <section class="panel">
+      <div class="hd">
+        <h2>90일 캘린더 & 필터</h2>
+        <div class="chips">
+          <div class="chip" data-filter="all" data-active="true"><span class="dot info"></span>전체</div>
+          <div class="chip" data-filter="done"><span class="dot good"></span>완료</div>
+          <div class="chip" data-filter="todo"><span class="dot warn"></span>미완료</div>
+          <div class="chip" data-filter="leads"><span class="dot bad"></span>리드 발생</div>
+        </div>
+      </div>
+
+      <div class="bd">
+        <div class="grid3">
+          <div class="card">
+            <div class="metric">
+              <div>
+                <div class="k">이번 주 목표</div>
+                <div class="tiny">주 14~21포 기준</div>
+              </div>
+              <div class="v" id="weekTarget">14</div>
+            </div>
+            <div class="sep"></div>
+            <div class="tiny">※ 글이 무제한이면 “전환형(고의도)” 비중만 유지하면 됨</div>
+          </div>
+
+          <div class="card">
+            <div class="metric">
+              <div>
+                <div class="k">전환형 비중</div>
+                <div class="tiny">전환형 3종 합계</div>
+              </div>
+              <div class="v" id="convRatio">0%</div>
+            </div>
+            <div class="sep"></div>
+            <div class="tiny">권장: <b>60%+</b> (초기 30일)</div>
+          </div>
+
+          <div class="card">
+            <div class="metric">
+              <div>
+                <div class="k">내부링크 규율</div>
+                <div class="tiny">체크 충족 Day</div>
+              </div>
+              <div class="v" id="linkDiscipline">0</div>
+            </div>
+            <div class="sep"></div>
+            <div class="tiny">권장: 90일 중 <b>70일+</b></div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div style="flex:1; min-width:220px">
+            <label>빠른 검색</label>
+            <input type="text" id="search" placeholder="키워드/제목 일부 검색" />
+          </div>
+          <div style="flex:1; min-width:220px">
+            <label>유형 필터</label>
+            <select id="typeFilter">
+              <option value="all">전체</option>
+              <option value="전환형-비교결단">전환형-비교결단</option>
+              <option value="전환형-실패경고">전환형-실패경고</option>
+              <option value="전환형-위기대응">전환형-위기대응</option>
+              <option value="신뢰형-승인사례">신뢰형-승인사례</option>
+              <option value="SEO형-기본정보">SEO형-기본정보</option>
+            </select>
+          </div>
+          <div style="flex:1; min-width:220px">
+            <label>의도 필터</label>
+            <select id="intentFilter">
+              <option value="all">전체</option>
+              <option value="고의도">고의도</option>
+              <option value="중의도">중의도</option>
+              <option value="저의도">저의도</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="calendar" id="calendar"></div>
+
+        <div class="sep"></div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
+            <div>
+              <div style="font-weight:900;font-size:13px;margin-bottom:6px">운영 원칙 (광고비 0원 버전)</div>
+              <div class="hint">
+                ① 돈되는 글(고의도/전환형) 먼저 ② 내부링크를 허브(“승인확률/변호사비용”)로 모으기
+                ③ FAQ 5개(Q1~Q5) 고정 ④ CTA는 “위험 회피(기각/압류/지연)” 기반
+              </div>
+            </div>
+            <div class="chips">
+              <span class="chip" style="cursor:default"><span class="dot good"></span>완료</span>
+              <span class="chip" style="cursor:default"><span class="dot warn"></span>미완료</span>
+              <span class="chip" style="cursor:default"><span class="dot bad"></span>리드</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <div class="footer-note">
+    ⚠️ 본 대시보드는 “작성/운영용” 도구입니다. 법률 자문이 아닙니다. 데이터는 이 브라우저에 저장됩니다.
+  </div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "lawgear_pacemaker_rehab_90d_v1";
+
+  // ---------- Defaults ----------
+  const defaultChecklist = [
+    { key:"cta3", title:"CTA 3개 삽입", desc:"중간 / FAQ 2개 이후 / 말미 (CTA 뒤에 본문 p 1개)" },
+    { key:"faq5", title:"FAQ 5개 고정", desc:"Q1~Q5 형식 고정, 질문/답변 개수 절대 변경 금지" },
+    { key:"link5", title:"내부링크 5개", desc:"허브글(변호사비용/승인확률)로 2개 이상 연결" },
+    { key:"noHype", title:"과장/단정 금지", desc:"100%/무조건/확정 표현 금지, 케이스별 다름 명시" },
+    { key:"proof", title:"근거/절차 명시", desc:"법원/절차/서류 흐름이 보이게 작성" },
+  ];
+
+  const conversionTypes = new Set(["전환형-비교결단","전환형-실패경고","전환형-위기대응"]);
+
+  const seedTitles = [
+    // 1~15 고의도/전환형(돈되는 글)
+    "개인회생 변호사 비용 비교///개인회생 변호사 비용",
+    "개인회생 수임료 평균과 추가비용 함정///개인회생 수임료",
+    "개인회생 승인확률 올리는 핵심 5가지///개인회생 승인확률",
+    "개인회생 무료상담 전에 꼭 확인할 3가지///개인회생 무료상담",
+    "개인회생 법무사 vs 변호사 뭐가 유리할까///개인회생 법무사 변호사",
+    "개인회생 기각 사유 TOP7과 피하는 방법///개인회생 기각 사유",
+    "개인회생 금지명령 기각되는 케이스///개인회생 금지명령 기각",
+    "개인회생 재신청 가능 조건과 타이밍///개인회생 재신청",
+    "개인회생 폐지되면 어떻게 되나 재진입 전략///개인회생 폐지",
+    "개인회생 변제금 줄이는 방법 현실 정리///개인회생 변제금 줄이기",
+    "개인회생 성공률이 갈리는 서류 포인트///개인회생 성공률",
+    "개인회생 기각 후 재도전 로드맵///개인회생 기각 후",
+    "개인회생 통장압류 풀리는 시점과 대응///개인회생 통장압류",
+    "개인회생 채권자 이의신청 들어오면///개인회생 이의신청",
+    "개인회생 보정권고 대응 못 하면 생기는 일///개인회생 보정권고",
+    // 16~30 중의도/위기대응 + 신뢰
+    "개인회생 서류 준비 체크리스트///개인회생 준비서류",
+    "개인회생 신청자격 조건 한 번에 정리///개인회생 신청자격",
+    "개인회생 절차 기간 단계별 일정///개인회생 절차",
+    "개인회생 금지명령 신청 방법///개인회생 금지명령",
+    "개인회생 보정명령 자주 나오는 이유///개인회생 보정명령",
+    "개인회생 변제계획안 작성 핵심///개인회생 변제계획안",
+    "개인회생 채무한도와 포함되는 채무///개인회생 채무한도",
+    "개인회생 면책 결정까지 걸리는 시간///개인회생 면책 기간",
+    "개인회생 중 자동차 유지 가능할까///개인회생 자동차",
+    "개인회생 중 대출 가능 여부///개인회생 대출",
+    "개인회생 중 카드 사용 가능할까///개인회생 신용카드",
+    "개인회생 소득 증빙 서류는 뭐가 필요///개인회생 소득증빙",
+    "개인회생 배우자 재산 영향 범위///개인회생 배우자 재산",
+    "개인회생 주거(전월세) 영향과 주의점///개인회생 전월세",
+    "개인회생 이후 신용회복 기간 정리///개인회생 신용회복",
+  ];
+
+  // ---------- State ----------
+  const state = loadState();
+
+  // ---------- Elements ----------
+  const el = {
+    startDate: document.getElementById("startDate"),
+    daySelect: document.getElementById("daySelect"),
+    dayLabel: document.getElementById("dayLabel"),
+    titleKeyword: document.getElementById("titleKeyword"),
+    url: document.getElementById("url"),
+    resultMemo: document.getElementById("resultMemo"),
+    postType: document.getElementById("postType"),
+    intent: document.getElementById("intent"),
+    notes: document.getElementById("notes"),
+    checklist: document.getElementById("checklist"),
+    btnSave: document.getElementById("btnSave"),
+    btnMarkDone: document.getElementById("btnMarkDone"),
+    btnUnDone: document.getElementById("btnUnDone"),
+    btnToday: document.getElementById("btnToday"),
+    btnExport: document.getElementById("btnExport"),
+    importFile: document.getElementById("importFile"),
+    btnReset: document.getElementById("btnReset"),
+    btnAutoFill: document.getElementById("btnAutoFill"),
+    calendar: document.getElementById("calendar"),
+    chips: Array.from(document.querySelectorAll(".chip[data-filter]")),
+    search: document.getElementById("search"),
+    typeFilter: document.getElementById("typeFilter"),
+    intentFilter: document.getElementById("intentFilter"),
+    progressPct: document.getElementById("progressPct"),
+    doneCount: document.getElementById("doneCount"),
+    leadCount: document.getElementById("leadCount"),
+    ctaClicks: document.getElementById("ctaClicks"),
+    leads: document.getElementById("leads"),
+    ctaClicksVal: document.getElementById("ctaClicksVal"),
+    leadsVal: document.getElementById("leadsVal"),
+    weekTarget: document.getElementById("weekTarget"),
+    convRatio: document.getElementById("convRatio"),
+    linkDiscipline: document.getElementById("linkDiscipline"),
+  };
+
+  // ---------- Init ----------
+  initStartDate();
+  initDaySelect();
+  bindEvents();
+  renderAll();
+
+  // ---------- Functions ----------
+  function initStartDate(){
+    if(!state.startDate){
+      state.startDate = formatDate(new Date());
+      saveState();
+    }
+    el.startDate.value = state.startDate;
+  }
+
+  function initDaySelect(){
+    el.daySelect.innerHTML = "";
+    for(let i=1;i<=90;i++){
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = `Day ${i}`;
+      el.daySelect.appendChild(opt);
+    }
+    el.daySelect.value = String(state.selectedDay || 1);
+  }
+
+  function bindEvents(){
+    el.daySelect.addEventListener("change", () => {
+      state.selectedDay = Number(el.daySelect.value);
+      saveState();
+      renderEditor();
+      renderCalendar();
+    });
+
+    el.startDate.addEventListener("change", () => {
+      state.startDate = el.startDate.value.trim() || formatDate(new Date());
+      saveState();
+      renderCalendar();
+    });
+
+    el.btnSave.addEventListener("click", () => {
+      applyEditorToDay();
+      saveState();
+      renderAll();
+    });
+
+    el.btnMarkDone.addEventListener("click", () => {
+      applyEditorToDay();
+      const d = getDay(state.selectedDay);
+      d.done = true;
+      saveState();
+      renderAll();
+    });
+
+    el.btnUnDone.addEventListener("click", () => {
+      const d = getDay(state.selectedDay);
+      d.done = false;
+      saveState();
+      renderAll();
+    });
+
+    el.btnToday.addEventListener("click", () => {
+      const dayNum = computeDayFromStart(state.startDate, new Date());
+      state.selectedDay = clamp(dayNum,1,90);
+      el.daySelect.value = String(state.selectedDay);
+      saveState();
+      renderAll();
+    });
+
+    el.btnExport.addEventListener("click", () => exportJSON());
+
+    el.importFile.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      if(!file) return;
+      const text = await file.text();
+      try{
+        const data = JSON.parse(text);
+        if(!data || !data.days || !Array.isArray(data.days)) throw new Error("형식 오류");
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        location.reload();
+      }catch(err){
+        alert("복원 실패: JSON 형식이 올바르지 않습니다.");
+      }finally{
+        el.importFile.value = "";
+      }
+    });
+
+    el.btnReset.addEventListener("click", () => {
+      if(!confirm("정말 초기화할까요? (저장된 90일 데이터가 삭제됩니다)")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    });
+
+    el.btnAutoFill.addEventListener("click", () => {
+      if(!confirm("90일 키워드/유형 자동 배치를 적용할까요? (이미 입력된 Day는 유지됩니다)")) return;
+      autoFill90Days();
+      saveState();
+      renderAll();
+    });
+
+    el.chips.forEach(ch => ch.addEventListener("click", () => {
+      el.chips.forEach(x => x.dataset.active = "false");
+      ch.dataset.active = "true";
+      state.filter = ch.dataset.filter;
+      saveState();
+      renderCalendar();
+    }));
+
+    el.search.addEventListener("input", () => { state.search = el.search.value; saveState(); renderCalendar(); });
+    el.typeFilter.addEventListener("change", () => { state.typeFilter = el.typeFilter.value; saveState(); renderCalendar(); });
+    el.intentFilter.addEventListener("change", () => { state.intentFilter = el.intentFilter.value; saveState(); renderCalendar(); });
+  }
+
+  function renderAll(){
+    renderStats();
+    renderEditor();
+    renderCalendar();
+    // restore filters
+    el.search.value = state.search || "";
+    el.typeFilter.value = state.typeFilter || "all";
+    el.intentFilter.value = state.intentFilter || "all";
+    const f = state.filter || "all";
+    el.chips.forEach(x => x.dataset.active = (x.dataset.filter===f) ? "true" : "false");
+  }
+
+  function renderStats(){
+    const done = state.days.filter(d => d.done).length;
+    const pct = Math.round((done/90)*100);
+    const leadsSum = state.days.reduce((a,d)=>a+(Number(d.leads)||0),0);
+    const ctaSum = state.days.reduce((a,d)=>a+(Number(d.ctaClicks)||0),0);
+
+    el.doneCount.textContent = String(done);
+    el.progressPct.textContent = `${pct}%`;
+    el.leadCount.textContent = String(leadsSum);
+
+    // conversion ratio
+    const convCount = state.days.filter(d => conversionTypes.has(d.postType)).length;
+    const convPct = Math.round((convCount/90)*100);
+    el.convRatio.textContent = `${convPct}%`;
+
+    // link discipline: days where link5 is checked
+    const linkDays = state.days.filter(d => d.checks?.link5 === true).length;
+    el.linkDiscipline.textContent = String(linkDays);
+
+    // week target (simple): 14 baseline, but if user can do 3/day, recommend 18
+    el.weekTarget.textContent = "14";
+
+    // show selected day cta/leads
+    const cur = getDay(state.selectedDay);
+    el.ctaClicksVal.textContent = String(cur.ctaClicks||0);
+    el.leadsVal.textContent = String(cur.leads||0);
+
+    // hint: if no leads for long
+    // (no hard behavior, just display numbers)
+  }
+
+  function renderEditor(){
+    const d = getDay(state.selectedDay);
+    el.dayLabel.textContent = `Day ${state.selectedDay}`;
+    el.titleKeyword.value = d.titleKeyword || "";
+    el.url.value = d.url || "";
+    el.resultMemo.value = d.resultMemo || "";
+    el.postType.value = d.postType || "전환형-비교결단";
+    el.intent.value = d.intent || "고의도";
+    el.notes.value = d.notes || "";
+    el.ctaClicks.value = d.ctaClicks ?? 0;
+    el.leads.value = d.leads ?? 0;
+
+    // checklist
+    el.checklist.innerHTML = "";
+    const checks = d.checks || {};
+    defaultChecklist.forEach(item => {
+      const wrap = document.createElement("div");
+      wrap.className = "check";
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.checked = !!checks[item.key];
+      box.addEventListener("change", () => {
+        checks[item.key] = box.checked;
+        d.checks = checks;
+        saveState();
+        renderStats();
+        renderCalendar();
+      });
+
+      const txt = document.createElement("div");
+      txt.style.flex = "1";
+      const t = document.createElement("div");
+      t.className="t";
+      t.textContent = item.title;
+      const desc = document.createElement("div");
+      desc.className="d";
+      desc.textContent = item.desc;
+      txt.appendChild(t); txt.appendChild(desc);
+
+      wrap.appendChild(box);
+      wrap.appendChild(txt);
+      el.checklist.appendChild(wrap);
+    });
+  }
+
+  function applyEditorToDay(){
+    const d = getDay(state.selectedDay);
+    d.titleKeyword = el.titleKeyword.value.trim();
+    d.url = el.url.value.trim();
+    d.resultMemo = el.resultMemo.value.trim();
+    d.postType = el.postType.value;
+    d.intent = el.intent.value;
+    d.notes = el.notes.value.trim();
+    d.ctaClicks = Number(el.ctaClicks.value || 0);
+    d.leads = Number(el.leads.value || 0);
+  }
+
+  function renderCalendar(){
+    el.calendar.innerHTML = "";
+    const start = parseDate(state.startDate);
+
+    const filter = state.filter || "all";
+    const q = (state.search || "").toLowerCase().trim();
+    const tf = state.typeFilter || "all";
+    const inf = state.intentFilter || "all";
+
+    for(let i=1;i<=90;i++){
+      const d = getDay(i);
+
+      // filters
+      if(filter === "done" && !d.done) continue;
+      if(filter === "todo" && d.done) continue;
+      if(filter === "leads" && !(Number(d.leads)||0)) continue;
+
+      if(tf !== "all" && d.postType !== tf) continue;
+      if(inf !== "all" && d.intent !== inf) continue;
+
+      if(q){
+        const hay = `${d.titleKeyword||""} ${d.postType||""} ${d.intent||""}`.toLowerCase();
+        if(!hay.includes(q)) continue;
+      }
+
+      const date = addDays(start, i-1);
+      const box = document.createElement("div");
+      box.className = "day" + (i === state.selectedDay ? " selected" : "");
+      box.addEventListener("click", () => {
+        state.selectedDay = i;
+        el.daySelect.value = String(i);
+        saveState();
+        renderAll();
+      });
+
+      const top = document.createElement("div");
+      top.className="num";
+      const left = document.createElement("span");
+      left.textContent = `D${String(i).padStart(2,"0")} · ${formatMMDD(date)}`;
+      const badge = document.createElement("span");
+
+      const hasLeads = (Number(d.leads)||0) > 0;
+      if(hasLeads){
+        badge.className="badge bad";
+        badge.textContent = `리드 ${d.leads}`;
+      }else if(d.done){
+        badge.className="badge good";
+        badge.textContent = "완료";
+      }else{
+        badge.className="badge warn";
+        badge.textContent = "대기";
+      }
+
+      top.appendChild(left);
+      top.appendChild(badge);
+
+      const mini = document.createElement("div");
+      mini.className="mini";
+
+      if(d.intent) mini.appendChild(tag(d.intent));
+      if(d.postType) mini.appendChild(tag(shortType(d.postType)));
+      if(d.titleKeyword){
+        const kw = d.titleKeyword.split("///")[1] ? d.titleKeyword.split("///")[1].trim() : d.titleKeyword.trim();
+        if(kw) mini.appendChild(tag(clip(kw, 10)));
+      }
+
+      box.appendChild(top);
+      box.appendChild(mini);
+      el.calendar.appendChild(box);
+    }
+  }
+
+  function tag(text){
+    const s = document.createElement("span");
+    s.textContent = text;
+    return s;
+  }
+  function clip(s,n){ return s.length>n ? s.slice(0,n)+"…" : s; }
+  function shortType(t){
+    if(t.startsWith("전환형-")) return t.replace("전환형-","전환/");
+    if(t.startsWith("신뢰형-")) return t.replace("신뢰형-","신뢰/");
+    if(t.startsWith("SEO형-")) return t.replace("SEO형-","SEO/");
+    return t;
+  }
+
+  function autoFill90Days(){
+    // only fill empty titleKeyword; keep user-edited days
+    // day 1~30: seedTitles (provided)
+    for(let i=1;i<=90;i++){
+      const d = getDay(i);
+      if(d.titleKeyword && d.titleKeyword.trim()) continue;
+
+      if(i<=seedTitles.length){
+        d.titleKeyword = seedTitles[i-1];
+      }else{
+        // generate pattern after 30: mix high-intent / mid / seo
+        const idx = i - seedTitles.length;
+        const pack = generateKeywordPack(idx);
+        d.titleKeyword = `${pack.title}///${pack.keyword}`;
+      }
+
+      // assign intent/type ratio:
+      // 1~45: conversion heavy (60%), then stabilize (50%)
+      const r = (i<=45) ? i % 10 : i % 12;
+      if(i<=45){
+        if(r<=5){
+          d.intent="고의도";
+          d.postType = (r%2===0) ? "전환형-실패경고" : "전환형-비교결단";
+        }else if(r<=8){
+          d.intent="중의도";
+          d.postType = "전환형-위기대응";
+        }else{
+          d.intent="저의도";
+          d.postType = "SEO형-기본정보";
+        }
+      }else{
+        if(r<=4){
+          d.intent="고의도";
+          d.postType = (r%2===0) ? "전환형-비교결단" : "전환형-실패경고";
+        }else if(r<=8){
+          d.intent="중의도";
+          d.postType = (r%2===0) ? "전환형-위기대응" : "신뢰형-승인사례";
+        }else{
+          d.intent="저의도";
+          d.postType = "SEO형-기본정보";
+        }
+      }
+
+      // initialize checklist defaults false
+      if(!d.checks) d.checks = {};
+      defaultChecklist.forEach(x => { if(typeof d.checks[x.key] !== "boolean") d.checks[x.key] = false; });
+    }
+  }
+
+  function generateKeywordPack(i){
+    // Simple deterministic generator for rehab niche
+    const themes = [
+      ["개인회생", "개인회생"],
+      ["개인회생", "개인회생"],
+      ["개인회생", "개인회생"],
+      ["개인회생", "개인회생"],
+    ];
+    const angles = [
+      ["비용", "비용"],
+      ["변제금", "변제금"],
+      ["기각", "기각"],
+      ["금지명령", "금지명령"],
+      ["폐지", "폐지"],
+      ["재신청", "재신청"],
+      ["보정", "보정명령"],
+      ["서류", "준비서류"],
+      ["기간", "기간"],
+      ["배우자", "배우자 재산"],
+      ["통장압류", "통장압류"],
+      ["채권자", "채권자 이의신청"],
+      ["소득", "소득증빙"],
+      ["재산", "재산 목록"],
+      ["변제계획", "변제계획안"],
+    ];
+    const verbs = [
+      ["한 번에 정리", "정리"],
+      ["자주 묻는 질문", "FAQ"],
+      ["실패하는 이유", "실패 이유"],
+      ["피하는 방법", "예방"],
+      ["가능 여부", "가능"],
+      ["현실 기준", "기준"],
+      ["체크리스트", "체크리스트"],
+      ["사례로 보는", "사례"],
+      ["주의할 점", "주의"],
+      ["바로잡는 법", "대응"],
+      ["필수 준비", "준비"],
+    ];
+
+    const ang = angles[i % angles.length];
+    const vb = verbs[i % verbs.length];
+    const base = themes[0];
+
+    const title = `${base[0]} ${ang[0]} ${vb[0]}`;
+    const keyword = `${base[1]} ${ang[1]}`;
+    return {title, keyword};
+  }
+
+  function exportJSON(){
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `lawgear_pacemaker_90d_backup_${state.startDate || formatDate(new Date())}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function loadState(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      try{
+        const s = JSON.parse(raw);
+        if(s && Array.isArray(s.days) && s.days.length === 90) return normalizeState(s);
+      }catch(e){}
+    }
+    // create fresh
+    const days = Array.from({length:90}).map((_,i)=>({
+      day: i+1,
+      done:false,
+      titleKeyword:"",
+      url:"",
+      resultMemo:"",
+      postType:"전환형-비교결단",
+      intent:"고의도",
+      notes:"",
+      ctaClicks:0,
+      leads:0,
+      checks: Object.fromEntries(defaultChecklist.map(x=>[x.key,false])),
+    }));
+    const fresh = {
+      startDate:"",
+      selectedDay:1,
+      filter:"all",
+      search:"",
+      typeFilter:"all",
+      intentFilter:"all",
+      days,
+    };
+    return normalizeState(fresh);
+  }
+
+  function normalizeState(s){
+    if(!s.selectedDay) s.selectedDay = 1;
+    if(!s.filter) s.filter = "all";
+    if(!s.search) s.search = "";
+    if(!s.typeFilter) s.typeFilter = "all";
+    if(!s.intentFilter) s.intentFilter = "all";
+    if(!s.days || s.days.length !== 90){
+      s.days = Array.from({length:90}).map((_,i)=>({day:i+1}));
+    }
+    // ensure each day has required fields
+    s.days = s.days.map((d,i)=>({
+      day: i+1,
+      done: !!d.done,
+      titleKeyword: d.titleKeyword || "",
+      url: d.url || "",
+      resultMemo: d.resultMemo || "",
+      postType: d.postType || "전환형-비교결단",
+      intent: d.intent || "고의도",
+      notes: d.notes || "",
+      ctaClicks: Number(d.ctaClicks||0),
+      leads: Number(d.leads||0),
+      checks: normalizeChecks(d.checks),
+    }));
+    return s;
+  }
+
+  function normalizeChecks(c){
+    const obj = {};
+    defaultChecklist.forEach(x => obj[x.key] = (c && typeof c[x.key]==="boolean") ? c[x.key] : false);
+    return obj;
+  }
+
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function getDay(n){
+    return state.days[n-1];
+  }
+
+  // Date helpers
+  function parseDate(s){
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");
+    if(!m) return new Date();
+    const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+    if(isNaN(d.getTime())) return new Date();
+    return d;
+  }
+  function addDays(date, days){
+    const d = new Date(date);
+    d.setDate(d.getDate()+days);
+    return d;
+  }
+  function formatDate(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${da}`;
+  }
+  function formatMMDD(d){
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${m}/${da}`;
+  }
+  function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+  function computeDayFromStart(startStr, now){
+    const start = parseDate(startStr);
+    const ms = now.getTime() - start.getTime();
+    const days = Math.floor(ms / (1000*60*60*24)) + 1;
+    return days;
+  }
+})();
+</script>
+</body>
+</html>
